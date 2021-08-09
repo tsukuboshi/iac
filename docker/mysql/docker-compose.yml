@@ -2,8 +2,14 @@ version: "3"
 services:
   mysql:
     build: .
-    volumes:
-      - ./db:/docker-entrypoint-initdb.d  #初期データのマウントポイント
-    image: mysql_demo
+    image: mysql_org
+    container_name: mysql_demo
     environment:
-      - MYSQL_ROOT_PASSWORD=password   #コンテナ内のMySQLを起動する際のパスワードを設定
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: sample_db
+      MYSQL_USER: mysql
+      MYSQL_PASSWORD: mysql
+    volumes:
+    - ~/work/mysql:/var/lib/mysql
+    ports:
+    - 3306:3306
