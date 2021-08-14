@@ -1,0 +1,43 @@
+## Deploy metrics-server
+
+kubectl apply -f https://github.com/kubernetes-sigs/metrics-server/releases/latest/download/components.yaml
+kubectl get deployment metrics-server -n kube-system
+
+## Deploy dashboard
+
+kubectl apply -f https://raw.githubusercontent.com/kubernetes/dashboard/v2.3.1/aio/deploy/recommended.yaml
+kubectl get deployment dashboard -n kube-system
+
+## Create kube-admin service account
+
+kubectl apply -f ./infra/kube-admin-service-account.yaml
+kubectl -n kube-system describe secret $(kubectl -n kube-system get secret | grep kube-admin | awk '{print $1}')
+
+## Deploy monitoring system
+
+kubectl create namespace monitoring
+helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+helm install prometheus prometheus-community/prometheus --namespace monitoring
+helm repo add grafana https://grafana.github.io/helm-charts
+helm install grafana grafana/grafana --namespace monitoring
+kubectl get deployment,service,serviceaccount -n monitoring
+
+## Deploy guestbook application
+
+kubectl apply -f ./app/redis-master.yaml
+kubectl apply -f ./app/redis-slave.yaml
+kubectl apply -f ./app/frontend.yaml
+kubectl get deployment,service -n default
+
+## Deploy ingress controller
+
+kubectl create namespace ingress-controller
+helm install nginx-ingress-controller ingress-nginx/ingress-nginx -n ingress-controller
+kubectl apply -f ./infra/ingress.yaml
+kubectl get ingress -n ingress-controller
+
+## References
+
+https://github.com/kubernetes-sigs/metrics-server
+https://github.com/kubernetes/dashboard
+https://github.com/kubernetes/examples/tree/master/guestbook
