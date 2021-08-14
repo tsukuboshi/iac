@@ -21,7 +21,7 @@ Operational knowledge of:
 
 ### Operating System
 - [macOS](https://www.apple.com/jp/macos/big-sur/) - v11.4
-### Command Line
+### IaC Software
 
 - [AWS CLI](https://aws.amazon.com/cli) - v2.1.26
 - [Terraform](https://www.terraform.io/downloads.html) - v1.0.0
