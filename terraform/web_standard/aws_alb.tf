@@ -54,7 +54,7 @@ resource "aws_lb_listener_rule" "forward" {
 
 # ====================
 #
-# Taeget Group
+# Target Group
 #
 # ====================
 
