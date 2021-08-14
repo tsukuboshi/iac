@@ -1,8 +1,8 @@
-# Infrastructure as Code (IaC) for Amazon Web Services (AWS)
+# Infrastructure as Code (IaC)
 
 ## Overview
 
-This repository contains scripts to provision AWS Cloud infrastructure resources.
+This repository contains scripts to provision Cloud infrastructure resources and Containers.
 
 &emsp;
 
