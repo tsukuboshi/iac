@@ -4,6 +4,7 @@
 #
 # ====================
 resource "aws_db_instance" "web_db" {
+  identifier             = "web-db"
   engine                 = var.db_engine
   engine_version         = var.db_engine_version
   instance_class         = var.db_instance_class
