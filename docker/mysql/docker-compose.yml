@@ -4,12 +4,14 @@ services:
     build: .
     image: mysql_org
     container_name: mysql_demo
+    restart: always
     environment:
       MYSQL_ROOT_PASSWORD: password
-      MYSQL_DATABASE: sample_db
       MYSQL_USER: mysql
       MYSQL_PASSWORD: mysql
-    volumes:
-    - ~/work/mysql:/var/lib/mysql
+      TZ: Asia/Tokyo
     ports:
-    - 3306:3306
+      - 13306:3306
+    volumes:
+      - ~/work/mysql/initdb.d:/docker-entrypoint-initdb.d
+      - ~/work/mysql/db:/var/lib/mysql
