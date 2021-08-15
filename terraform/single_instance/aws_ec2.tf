@@ -52,12 +52,12 @@ resource "aws_instance" "test_instance" {
   vpc_security_group_ids = [aws_security_group.test_sg.id]
   instance_type          = var.instance_type
   root_block_device {
-    volume_type          = var.volume_type
-    volume_size          = var.volume_size
+    volume_type           = var.volume_type
+    volume_size           = var.volume_size
     delete_on_termination = "true"
   }
 
-  user_data              = var.user_data
+  user_data = file(var.user_data_file)
 
   tags = {
     Name = "test_instance"
@@ -72,5 +72,5 @@ resource "aws_instance" "test_instance" {
 
 resource "aws_key_pair" "test_key" {
   key_name   = var.key_name
-  public_key = var.public_key
+  public_key = file(var.public_key_file)
 }

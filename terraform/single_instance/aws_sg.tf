@@ -4,8 +4,8 @@
 #
 # ====================
 resource "aws_security_group" "test_sg" {
-  name        = "test_sg"
-  vpc_id      = aws_vpc.test_vpc.id
+  name   = "test_sg"
+  vpc_id = aws_vpc.test_vpc.id
 
   tags = {
     Name = "test_sg"

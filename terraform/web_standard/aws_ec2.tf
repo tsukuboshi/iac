@@ -55,7 +55,7 @@ resource "aws_instance" "web_instance_1a" {
     volume_type          = var.volume_type
     volume_size          = var.volume_size
   }
-  user_data              = var.user_data
+  user_data              = file(var.user_data_file)
 
   tags = {
     Name = "web_instance_1a"
@@ -72,7 +72,7 @@ resource "aws_instance" "web_instance_1c" {
     volume_type          = var.volume_type
     volume_size          = var.volume_size
   }
-  user_data              = var.user_data
+  user_data              = file(var.user_data_file)
 
   tags = {
     Name = "web_instance_1c"
@@ -88,5 +88,5 @@ resource "aws_instance" "web_instance_1c" {
 
 resource "aws_key_pair" "web_key" {
   key_name   = var.key_name
-  public_key = var.public_key
+  public_key = file(var.public_key_file)
 }

@@ -5,7 +5,7 @@
 # ====================
 
 resource "aws_vpc" "test_vpc" {
-  cidr_block = var.cidr_block
+  cidr_block           = var.cidr_block
   enable_dns_support   = true # DNS解決有効化
   enable_dns_hostnames = true # DNSホスト名有効化
 
@@ -21,10 +21,10 @@ resource "aws_vpc" "test_vpc" {
 # ====================
 
 resource "aws_subnet" "test_subnet" {
-  vpc_id            = aws_vpc.test_vpc.id
-  cidr_block        = var.subnet_cidr_block
+  vpc_id                  = aws_vpc.test_vpc.id
+  cidr_block              = var.subnet_cidr_block
   map_public_ip_on_launch = true #インスタンス起動時におけるパブリックIPアドレスの自動割り当ての有効化
-  availability_zone = "ap-northeast-1a"
+  availability_zone       = "ap-northeast-1a"
 
   tags = {
     Name = "test_subnet"

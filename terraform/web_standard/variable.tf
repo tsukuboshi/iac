@@ -25,13 +25,13 @@ variable "volume_size" {
   default = "8"
 }
 
-variable "user_data" {
+variable "user_data_file" {
   default = "./user_data.sh"
 }
 
 variable "key_name" {}
 
-variable "public_key" {}
+variable "public_key_file" {}
 
 # VPC #
 variable "cidr_block" {
