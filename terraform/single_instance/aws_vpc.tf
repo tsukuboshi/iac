@@ -24,7 +24,7 @@ resource "aws_subnet" "test_subnet" {
   vpc_id                  = aws_vpc.test_vpc.id
   cidr_block              = var.subnet_cidr_block
   map_public_ip_on_launch = true #インスタンス起動時におけるパブリックIPアドレスの自動割り当ての有効化
-  availability_zone       = "ap-northeast-1a"
+  availability_zone       = var.availability_zone
 
   tags = {
     Name = "test_subnet"

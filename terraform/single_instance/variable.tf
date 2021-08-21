@@ -10,7 +10,9 @@ variable "aws_region" {
 }
 
 # IAM #
-variable "aws_profile" {}
+variable "aws_profile" {
+  default = "tf-demo" # AWSプロファイル
+}
 
 # EC2 #
 variable "instance_type" {
@@ -29,9 +31,13 @@ variable "user_data_file" {
   default = "./user_data.sh"
 }
 
-variable "key_name" {}
+variable "key_name" {
+  default = "single_instance"
+}
 
-variable "public_key_file" {}
+variable "public_key_file" {
+  default = "~/.ssh/single_instance.pem.pub"
+}
 
 # VPC #
 variable "vpc_cidr_block" {
@@ -40,4 +46,8 @@ variable "vpc_cidr_block" {
 
 variable "subnet_cidr_block" {
   default = "10.0.1.0/24"
+}
+
+variable "availability_zone" {
+  default = "ap-northeast-1a"
 }
