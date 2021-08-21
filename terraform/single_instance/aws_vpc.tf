@@ -5,7 +5,7 @@
 # ====================
 
 resource "aws_vpc" "test_vpc" {
-  cidr_block           = var.cidr_block
+  cidr_block           = var.vpc_cidr_block
   enable_dns_support   = true # DNS解決有効化
   enable_dns_hostnames = true # DNSホスト名有効化
 

@@ -34,7 +34,7 @@ variable "key_name" {}
 variable "public_key_file" {}
 
 # VPC #
-variable "cidr_block" {
+variable "vpc_cidr_block" {
   default = "10.0.0.0/16"
 }
 
