@@ -1,5 +1,4 @@
-# ====================
-#
+
 # Variables
 #
 # ====================
@@ -34,33 +33,40 @@ variable "key_name" {}
 variable "public_key_file" {}
 
 # VPC #
-variable "cidr_block" {
+variable "availability_zone_1" {
+  default = "ap-northeast-1a"
+}
+
+variable "availability_zone_2" {
+  default = "ap-northeast-1c"
+}
+variable "vpc_cidr_block" {
   default = "10.0.0.0/16"
 }
 
-variable "subnet_alb_1a_cidr_block" {
+variable "subnet_cidr_block_1" {
   default = "10.0.1.0/24"
 }
 
-variable "subnet_alb_1c_cidr_block" {
+variable "subnet_cidr_block_2" {
   default = "10.0.2.0/24"
 
 }
 
-variable "subnet_ec2_1a_cidr_block" {
-  default = "10.0.3.0/24"
+variable "subnet_cidr_block_3" {
+  default = "10.0.103.0/24"
 }
 
-variable "subnet_ec2_1c_cidr_block" {
-  default = "10.0.4.0/24"
+variable "subnet_cidr_block_4" {
+  default = "10.0.104.0/24"
 }
 
-variable "subnet_rds_1a_cidr_block" {
-  default = "10.0.5.0/24"
+variable "subnet_cidr_block_5" {
+  default = "10.0.105.0/24"
 }
 
-variable "subnet_rds_1c_cidr_block" {
-  default = "10.0.6.0/24"
+variable "subnet_cidr_block_6" {
+  default = "10.0.106.0/24"
 }
 
 # RDS #

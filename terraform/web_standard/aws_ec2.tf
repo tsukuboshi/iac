@@ -48,14 +48,14 @@ data "aws_ami" "web_ami" {
 resource "aws_instance" "web_instance_1a" {
   ami                    = data.aws_ami.web_ami.image_id
   key_name               = aws_key_pair.web_key.id
-  subnet_id              = aws_subnet.web_subnet_ec2_1a.id
+  subnet_id              = aws_subnet.web_subnet_1.id
   vpc_security_group_ids = [aws_security_group.web_sg_ec2.id]
   instance_type          = var.instance_type
   root_block_device {
-    volume_type          = var.volume_type
-    volume_size          = var.volume_size
+    volume_type = var.volume_type
+    volume_size = var.volume_size
   }
-  user_data              = file(var.user_data_file)
+  user_data = file(var.user_data_file)
 
   tags = {
     Name = "web_instance_1a"
@@ -65,14 +65,14 @@ resource "aws_instance" "web_instance_1a" {
 resource "aws_instance" "web_instance_1c" {
   ami                    = data.aws_ami.web_ami.image_id
   key_name               = aws_key_pair.web_key.id
-  subnet_id              = aws_subnet.web_subnet_ec2_1c.id
+  subnet_id              = aws_subnet.web_subnet_2.id
   vpc_security_group_ids = [aws_security_group.web_sg_ec2.id]
   instance_type          = var.instance_type
   root_block_device {
-    volume_type          = var.volume_type
-    volume_size          = var.volume_size
+    volume_type = var.volume_type
+    volume_size = var.volume_size
   }
-  user_data              = file(var.user_data_file)
+  user_data = file(var.user_data_file)
 
   tags = {
     Name = "web_instance_1c"

@@ -5,16 +5,16 @@
 # ====================
 resource "aws_lb" "web_alb" {
   name               = "web-alb"
-  internal           = false             #falseを指定するとインターネット向け,trueを指定すると内部向け
+  internal           = false #falseを指定するとインターネット向け,trueを指定すると内部向け
   load_balancer_type = "application"
 
-  security_groups    = [
+  security_groups = [
     aws_security_group.web_sg_alb.id
   ]
 
-  subnets            = [
-      aws_subnet.web_subnet_alb_1a.id,
-      aws_subnet.web_subnet_alb_1c.id,
+  subnets = [
+    aws_subnet.web_subnet_1.id,
+    aws_subnet.web_subnet_2.id,
   ]
 }
 
@@ -27,7 +27,7 @@ resource "aws_lb" "web_alb" {
 resource "aws_lb_listener" "web_alb_lsnr" {
   load_balancer_arn = aws_lb.web_alb.arn
   port              = "80"
-  protocol          = "http"
+  protocol          = "HTTP"
 
   default_action {
     type             = "forward"
@@ -46,9 +46,9 @@ resource "aws_lb_listener_rule" "forward" {
   }
 
   condition {
-      path_pattern{
-        values = ["/*"]
-      }
+    path_pattern {
+      values = ["/*"]
+    }
   }
 }
 
@@ -59,12 +59,12 @@ resource "aws_lb_listener_rule" "forward" {
 # ====================
 
 resource "aws_lb_target_group" "web_alb_tg" {
-  port        = 80
-  protocol    = "http"
-  vpc_id      = aws_vpc.web_vpc.id
+  port     = 80
+  protocol = "HTTP"
+  vpc_id   = aws_vpc.web_vpc.id
 
   health_check {
-        path        = "/index.html"
+    path = "/index.html"
   }
 }
 
