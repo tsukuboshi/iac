@@ -9,6 +9,14 @@ variable "aws_region" {
   default = "ap-northeast-1"
 }
 
+variable "project" {
+  default = "minimum"
+}
+
+variable "environment" {
+  default = "test"
+}
+
 # IAM #
 variable "aws_profile" {
   default = "tf-demo" # AWSプロファイル
@@ -28,7 +36,7 @@ variable "volume_size" {
 }
 
 variable "user_data_file" {
-  default = "./user_data.sh"
+  default = "./src/user_data.sh"
 }
 
 variable "key_name" {

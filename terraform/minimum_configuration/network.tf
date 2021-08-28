@@ -10,7 +10,9 @@ resource "aws_vpc" "test_vpc" {
   enable_dns_hostnames = true # DNSホスト名有効化
 
   tags = {
-    Name = "test_vpc"
+    Name    = "${var.project}-${var.environment}-vpc"
+    Project = var.project
+    Env     = var.environment
   }
 }
 
@@ -27,7 +29,9 @@ resource "aws_subnet" "test_subnet" {
   availability_zone       = var.availability_zone
 
   tags = {
-    Name = "test_subnet"
+    Name    = "${var.project}-${var.environment}-subnet"
+    Project = var.project
+    Env     = var.environment
   }
 }
 
@@ -40,7 +44,9 @@ resource "aws_internet_gateway" "test_gw" {
   vpc_id = aws_vpc.test_vpc.id
 
   tags = {
-    Name = "test_gw"
+    Name    = "${var.project}-${var.environment}-gw"
+    Project = var.project
+    Env     = var.environment
   }
 }
 
@@ -52,7 +58,9 @@ resource "aws_internet_gateway" "test_gw" {
 resource "aws_route_table" "test_rt" {
   vpc_id = aws_vpc.test_vpc.id
   tags = {
-    Name = "test_route_table"
+    Name    = "${var.project}-${var.environment}-rt"
+    Project = var.project
+    Env     = var.environment
   }
 }
 

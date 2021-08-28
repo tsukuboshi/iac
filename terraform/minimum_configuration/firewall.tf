@@ -8,7 +8,9 @@ resource "aws_security_group" "test_sg" {
   vpc_id = aws_vpc.test_vpc.id
 
   tags = {
-    Name = "test_sg"
+    Name    = "${var.project}-${var.environment}-sg"
+    Project = var.project
+    Env     = var.environment
   }
 }
 
