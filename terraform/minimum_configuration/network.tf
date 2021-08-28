@@ -40,11 +40,11 @@ resource "aws_subnet" "example_subnet" {
 # Internet Gateway
 #
 # ====================
-resource "aws_internet_gateway" "example_gw" {
+resource "aws_internet_gateway" "example_igw" {
   vpc_id = aws_vpc.example_vpc.id
 
   tags = {
-    Name    = "${var.project}-${var.environment}-gw"
+    Name    = "${var.project}-${var.environment}-igw"
     Project = var.project
     Env     = var.environment
   }
@@ -66,7 +66,7 @@ resource "aws_route_table" "example_rt" {
 
 resource "aws_route" "example_route" {
   route_table_id         = aws_route_table.example_rt.id
-  gateway_id             = aws_internet_gateway.example_gw.id
+  gateway_id             = aws_internet_gateway.example_igw.id
   destination_cidr_block = "0.0.0.0/0"
 }
 
