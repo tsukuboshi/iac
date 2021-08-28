@@ -3,9 +3,9 @@
 # Security Group
 #
 # ====================
-resource "aws_security_group" "test_sg" {
-  name   = "test_sg"
-  vpc_id = aws_vpc.test_vpc.id
+resource "aws_security_group" "example_sg" {
+  name   = "example_sg"
+  vpc_id = aws_vpc.example_vpc.id
 
   tags = {
     Name    = "${var.project}-${var.environment}-sg"
@@ -16,7 +16,7 @@ resource "aws_security_group" "test_sg" {
 
 # インバウンドルール(ssh接続用)
 resource "aws_security_group_rule" "in_ssh" {
-  security_group_id = aws_security_group.test_sg.id
+  security_group_id = aws_security_group.example_sg.id
   type              = "ingress"
   cidr_blocks       = ["0.0.0.0/0"]
   from_port         = 22
@@ -26,7 +26,7 @@ resource "aws_security_group_rule" "in_ssh" {
 
 # インバウンドルール(ping疎通確認用)
 resource "aws_security_group_rule" "in_icmp" {
-  security_group_id = aws_security_group.test_sg.id
+  security_group_id = aws_security_group.example_sg.id
   type              = "ingress"
   cidr_blocks       = ["0.0.0.0/0"]
   from_port         = -1
@@ -36,7 +36,7 @@ resource "aws_security_group_rule" "in_icmp" {
 
 # アウトバウンドルール(全開放)
 resource "aws_security_group_rule" "out_all" {
-  security_group_id = aws_security_group.test_sg.id
+  security_group_id = aws_security_group.example_sg.id
   type              = "egress"
   cidr_blocks       = ["0.0.0.0/0"]
   from_port         = 0

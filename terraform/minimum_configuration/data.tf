@@ -4,7 +4,7 @@
 #
 # ====================
 # 最新版のAmazonLinux2のAMI情報
-data "aws_ami" "test_ami" {
+data "aws_ami" "example_ami" {
   most_recent = true
   owners      = ["amazon"]
 
