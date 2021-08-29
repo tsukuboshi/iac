@@ -40,11 +40,11 @@ variable "user_data_file" {
 }
 
 variable "key_name" {
-  default = "single_instance"
+  default = "minimum"
 }
 
 variable "public_key_file" {
-  default = "~/.ssh/single_instance.pem.pub"
+  default = "~/.ssh/minimum.pem.pub"
 }
 
 # VPC #
