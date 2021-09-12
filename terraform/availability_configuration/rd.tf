@@ -80,7 +80,7 @@ resource "aws_db_instance" "example_db" {
   publicly_accessible    = false
   port                   = 3306
 
-  name                 = "${var.project}-${var.environment}-db"
+  name                 = "${var.project}${var.environment}db"
   parameter_group_name = aws_db_parameter_group.example_db_parametergroup.name
   option_group_name    = aws_db_option_group.example_db_optiongroup.name
 
