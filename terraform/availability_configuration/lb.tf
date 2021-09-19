@@ -32,7 +32,7 @@ resource "aws_lb_listener" "example_alb_lsnr_http" {
   protocol          = "HTTP"
 
   default_action {
-    type             = "redirect"
+    type = "redirect"
 
     redirect {
       port        = 443

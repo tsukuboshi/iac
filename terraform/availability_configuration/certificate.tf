@@ -17,7 +17,7 @@ resource "aws_acm_certificate" "example_cert" {
   }
 
   depends_on = [
-    aws_route53_zone.example_route53_zone
+    data.aws_route53_zone.example_route53_zone
   ]
 }
 
@@ -37,7 +37,7 @@ resource "aws_route53_record" "example_route53_acm_dns_resolve" {
   }
 
   allow_overwrite = true
-  zone_id         = aws_route53_zone.example_route53_zone.zone_id
+  zone_id         = data.aws_route53_zone.example_route53_zone.zone_id
   name            = each.value.name
   type            = each.value.type
   ttl             = 600

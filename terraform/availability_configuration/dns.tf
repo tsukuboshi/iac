@@ -3,17 +3,12 @@
 # Route53
 #
 # ====================
-resource "aws_route53_zone" "example_route53_zone" {
-  name = var.domain
 
-  tags = {
-    Name    = "${var.project}-${var.environment}-domain"
-    Project = var.project
-    Env     = var.environment
-  }
+data "aws_route53_zone" "example_route53_zone" {
+  name = var.domain
 }
 resource "aws_route53_record" "example_route53_record" {
-  zone_id = aws_route53_zone.example_route53_zone.id
+  zone_id = data.aws_route53_zone.example_route53_zone.id
   name    = "www.example.${var.domain}"
   type    = "A"
 
