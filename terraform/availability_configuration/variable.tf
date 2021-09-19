@@ -126,6 +126,27 @@ variable "deregistration_delay" {
   default = 300
 }
 
+variable "healthy_threshold" {
+  default = 5
+}
+
+variable "unhealthy_threshold" {
+  default = 2
+}
+
+variable "timeout" {
+  default = 5
+}
+
+
+variable "interval" {
+  default = 30
+}
+
+variable "matcher" {
+  default = 200
+}
+
 # Route53 #
 
 variable "domain" {

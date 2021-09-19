@@ -26,6 +26,16 @@ resource "aws_security_group_rule" "in_http_alb" {
   protocol          = "tcp"
 }
 
+# インバウンドルール(https接続用)
+resource "aws_security_group_rule" "in_https_alb" {
+  security_group_id = aws_security_group.example_sg_alb.id
+  type              = "ingress"
+  cidr_blocks       = ["0.0.0.0/0"]
+  from_port         = 443
+  to_port           = 443
+  protocol          = "tcp"
+}
+
 # アウトバウンドルール(全開放)
 resource "aws_security_group_rule" "out_all_alb" {
   security_group_id = aws_security_group.example_sg_alb.id
@@ -55,6 +65,16 @@ resource "aws_security_group_rule" "in_http_ec2" {
   cidr_blocks       = ["0.0.0.0/0"]
   from_port         = 80
   to_port           = 80
+  protocol          = "tcp"
+}
+
+# インバウンドルール(https接続用)
+resource "aws_security_group_rule" "in_https_ec2" {
+  security_group_id = aws_security_group.example_sg_ec2.id
+  type              = "ingress"
+  cidr_blocks       = ["0.0.0.0/0"]
+  from_port         = 443
+  to_port           = 443
   protocol          = "tcp"
 }
 
