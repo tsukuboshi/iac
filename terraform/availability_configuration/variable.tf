@@ -115,3 +115,19 @@ variable "backup_retention_period" {
 variable "maintenance_window" {
   default = "Mon:05:00-Mon:08:00"
 }
+
+# ALB #
+
+variable "idle_timeout" {
+  default = 60
+}
+
+variable "deregistration_delay" {
+  default = 300
+}
+
+# Route53 #
+
+variable "domain" {
+  default = "tf.com"
+}

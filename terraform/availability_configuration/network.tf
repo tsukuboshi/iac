@@ -161,3 +161,34 @@ resource "aws_route_table_association" "example_public_subrt_4" {
   subnet_id      = aws_subnet.example_subnet_4.id
   route_table_id = aws_route_table.example_public_rt.id
 }
+
+
+# ====================
+#
+# Elastic IP
+#
+# ====================
+
+resource "aws_eip" "eip_1a" {
+  vpc        = true
+  instance   = aws_instance.example_instance_1a.id
+  depends_on = [aws_internet_gateway.example_igw]
+
+  tags = {
+    Name    = "${var.project}-${var.environment}-eip-1a"
+    Project = var.project
+    Env     = var.environment
+  }
+}
+
+resource "aws_eip" "eip_1c" {
+  vpc        = true
+  instance   = aws_instance.example_instance_1c.id
+  depends_on = [aws_internet_gateway.example_igw]
+
+  tags = {
+    Name    = "${var.project}-${var.environment}-eip-1c"
+    Project = var.project
+    Env     = var.environment
+  }
+}

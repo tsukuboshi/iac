@@ -4,17 +4,19 @@
 #
 # ====================
 resource "aws_lb" "example_alb" {
-  name               = "${var.project}-${var.environment}-app-alb"
-  internal           = false #falseを指定するとインターネット向け,trueを指定すると内部向け
-  load_balancer_type = "application"
-
-  security_groups = [
-    aws_security_group.example_sg_alb.id
-  ]
+  name                       = "${var.project}-${var.environment}-app-alb"
+  internal                   = false #falseを指定するとインターネット向け,trueを指定すると内部向け
+  load_balancer_type         = "application"
+  idle_timeout               = var.idle_timeout
+  enable_deletion_protection = false
 
   subnets = [
     aws_subnet.example_subnet_1.id,
     aws_subnet.example_subnet_2.id,
+  ]
+
+  security_groups = [
+    aws_security_group.example_sg_alb.id
   ]
 }
 
@@ -24,7 +26,7 @@ resource "aws_lb" "example_alb" {
 #
 # ====================
 
-resource "aws_lb_listener" "example_alb_lsnr" {
+resource "aws_lb_listener" "example_alb_lsnr_http" {
   load_balancer_arn = aws_lb.example_alb.arn
   port              = "80"
   protocol          = "HTTP"
@@ -32,23 +34,6 @@ resource "aws_lb_listener" "example_alb_lsnr" {
   default_action {
     type             = "forward"
     target_group_arn = aws_lb_target_group.example_alb_tg.arn
-  }
-
-}
-
-resource "aws_lb_listener_rule" "forward" {
-  listener_arn = aws_lb_listener.example_alb_lsnr.arn
-  priority     = 99
-
-  action {
-    type             = "forward"
-    target_group_arn = aws_lb_target_group.example_alb_tg.arn
-  }
-
-  condition {
-    path_pattern {
-      values = ["/*"]
-    }
   }
 }
 
@@ -59,16 +44,18 @@ resource "aws_lb_listener_rule" "forward" {
 # ====================
 
 resource "aws_lb_target_group" "example_alb_tg" {
-  port     = 80
-  protocol = "HTTP"
-  vpc_id   = aws_vpc.example_vpc.id
+  name                 = "${var.project}-${var.environment}-alp-tg"
+  port                 = 80
+  protocol             = "HTTP"
+  vpc_id               = aws_vpc.example_vpc.id
+  deregistration_delay = var.deregistration_delay
 
   health_check {
     path = "/index.html"
   }
 
   tags = {
-    Name    = "${var.project}-${var.environment}-app-tg"
+    Name    = "${var.project}-${var.environment}-alp-tg"
     Project = var.project
     Env     = var.environment
   }
