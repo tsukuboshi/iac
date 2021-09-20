@@ -1,5 +1,5 @@
 #!/bin/bash
-# Run this shell after executing "terraform apply".
+# Run this shell in "terraform init" directory after executing "terraform apply".
 
 DOMAIN_NAME="$(terraform output -json | jq -r .domain_name.value)"
 

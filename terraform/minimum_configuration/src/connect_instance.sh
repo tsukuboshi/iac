@@ -1,5 +1,5 @@
 #!/bin/bash
-# Run this shell after executing "terraform apply".
+# Run this shell in "terraform init" directory after executing "terraform apply".
 
 INSTANCE_PUBLIC_IP="$(terraform output -json | jq -r .instance_public_ip.value)"
 

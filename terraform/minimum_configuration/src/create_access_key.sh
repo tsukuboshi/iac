@@ -1,5 +1,5 @@
 #!/bin/bash
-# Run this shell before executing "terraform apply".
+# Run this shell in "terraform init" directory before executing "terraform apply".
 
 if [ -f ~/.ssh/minimum_configuration.pem ]; then
   ssh-keygen -t rsa -f ~/.ssh/minimum_configuration.pem
