@@ -152,3 +152,8 @@ variable "matcher" {
 variable "domain" {
   default = "tf.com"
 }
+
+# S3 #
+variable "expiration_days" {
+  default = 10
+}

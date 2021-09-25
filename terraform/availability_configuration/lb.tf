@@ -10,6 +10,11 @@ resource "aws_lb" "example_alb" {
   idle_timeout               = var.idle_timeout
   enable_deletion_protection = false
 
+  access_logs {
+    bucket  = aws_s3_bucket.example_log_bucket.id
+    enabled = true
+  }
+
   subnets = [
     aws_subnet.example_subnet_1.id,
     aws_subnet.example_subnet_2.id,
@@ -96,3 +101,5 @@ resource "aws_lb_target_group_attachment" "example_alb_tgec2_1c" {
   target_group_arn = aws_lb_target_group.example_alb_tg.arn
   target_id        = aws_instance.example_instance_1c.id
 }
+
+data "aws_elb_service_account" "example_log_service_account" {}
