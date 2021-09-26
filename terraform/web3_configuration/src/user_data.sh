@@ -1,7 +1,6 @@
 #!/bin/bash
 yum update -y
 yum install -y httpd
-yum install -y mysql
 systemctl start httpd
 systemctl enable httpd
 usermod -a -G apache ec2-user
