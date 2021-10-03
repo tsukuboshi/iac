@@ -5,11 +5,11 @@
 # ====================
 
 data "aws_route53_zone" "example_route53_zone" {
-  name = var.domain
+  name = var.registered_domain
 }
 resource "aws_route53_record" "example_route53_record" {
   zone_id = data.aws_route53_zone.example_route53_zone.id
-  name    = "www.example.${var.domain}"
+  name    = "www.example.${var.registered_domain}"
   type    = "A"
 
   alias {

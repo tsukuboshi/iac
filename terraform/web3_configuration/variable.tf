@@ -149,9 +149,7 @@ variable "matcher" {
 
 # Route53 #
 
-variable "domain" {
-  default = "tf.com"
-}
+variable "registered_domain" {}
 
 # S3 #
 variable "expiration_days" {
