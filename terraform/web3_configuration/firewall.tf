@@ -58,6 +58,16 @@ resource "aws_security_group" "example_sg_ec2" {
   }
 }
 
+# インバウンドルール(ssh接続用)
+resource "aws_security_group_rule" "in_ssh_ec2" {
+  security_group_id = aws_security_group.example_sg_ec2.id
+  type              = "ingress"
+  cidr_blocks       = ["0.0.0.0/0"]
+  from_port         = 22
+  to_port           = 22
+  protocol          = "tcp"
+}
+
 # インバウンドルール(http接続用)
 resource "aws_security_group_rule" "in_http_ec2" {
   security_group_id = aws_security_group.example_sg_ec2.id
