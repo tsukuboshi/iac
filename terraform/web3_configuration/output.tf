@@ -8,11 +8,11 @@ output "domain_name" {
   value = aws_route53_record.example_route53_record.name
 }
 
-output "instance_1a_public_ip" {
+output "instance_1a_private_ip" {
   value = aws_instance.example_instance_1a.private_ip
 }
 
-output "instance_1c_public_ip" {
+output "instance_1c_private_ip" {
   value = aws_instance.example_instance_1c.private_ip
 }
 
