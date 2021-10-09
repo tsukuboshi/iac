@@ -69,6 +69,7 @@ resource "aws_lb_listener" "example_alb_lsnr_https" {
 
 resource "aws_lb_target_group" "example_alb_tg" {
   name                 = "${var.project}-${var.environment}-alp-tg"
+  target_type          = "instance"
   port                 = 80
   protocol             = "HTTP"
   vpc_id               = aws_vpc.example_vpc.id
@@ -84,6 +85,10 @@ resource "aws_lb_target_group" "example_alb_tg" {
     port                = "traffic-port"
     protocol            = "HTTP"
   }
+
+  depends_on = [
+    aws_lb.example_alb
+  ]
 
   tags = {
     Name    = "${var.project}-${var.environment}-alp-tg"
