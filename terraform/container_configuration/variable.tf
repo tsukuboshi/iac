@@ -19,7 +19,7 @@ variable "environment" {
 
 # IAM #
 variable "aws_profile" {
-  default = "tf-demo" # AWSプロファイル
+  default = "tf-demo"
 }
 
 # VPC #
