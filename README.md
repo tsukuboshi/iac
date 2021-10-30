@@ -2,7 +2,7 @@
 
 ## Overview
 
-This repository contains scripts to provision Cloud infrastructure resources and Containers.
+This repository contains scripts to provision Cloud infrastructure resources.
 
 &emsp;
 
