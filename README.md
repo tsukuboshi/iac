@@ -30,5 +30,5 @@ Operational knowledge of:
 Clone this repository.
 
 ```shell
-$ cd ~ && git clone git@github.com:kuraboshi/iac.git
+$ cd ~ && git clone https://github.com/kuraboshi/iac
 ```
