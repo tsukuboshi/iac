@@ -19,7 +19,7 @@ variable "environment" {
 
 # IAM #
 variable "aws_profile" {
-  default = "website"
+  default = "kuraboshi"
 }
 
 # EC2 #
