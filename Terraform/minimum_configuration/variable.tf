@@ -44,7 +44,7 @@ variable "key_name" {
 }
 
 variable "public_key_file" {
-  default = "~/.ssh/minimum.pem.pub"
+  default = "~/.ssh/minimum_configuration.pem"
 }
 
 # VPC #
