@@ -4,7 +4,7 @@
 #
 # ====================
 # 最新版のAmazonLinux2のAMI情報
-data "aws_ami" "example_ami" {
+data "aws_ami" "tf_ami" {
   most_recent = true
   owners      = ["amazon"]
 
@@ -46,12 +46,12 @@ data "aws_ami" "example_ami" {
 #
 # ====================
 
-resource "aws_instance" "example_instance" {
-  ami                    = data.aws_ami.example_ami.image_id
+resource "aws_instance" "tf_instance" {
+  ami                    = data.aws_ami.tf_ami.image_id
   instance_type          = var.instance_type
-  subnet_id              = aws_subnet.example_subnet.id
+  subnet_id              = aws_subnet.tf_subnet.id
   associate_public_ip_address = true
-  vpc_security_group_ids = [aws_security_group.example_sg.id]
+  vpc_security_group_ids = [aws_security_group.tf_sg.id]
 
   root_block_device {
     volume_type           = var.volume_type
@@ -59,7 +59,7 @@ resource "aws_instance" "example_instance" {
     delete_on_termination = true
   }
 
-  key_name               = aws_key_pair.example_key.id
+  key_name               = aws_key_pair.tf_key.id
   user_data              = file(var.user_data_file)
 
   tags = {
@@ -75,7 +75,7 @@ resource "aws_instance" "example_instance" {
 #
 # ====================
 
-resource "aws_key_pair" "example_key" {
+resource "aws_key_pair" "tf_key" {
   key_name   = var.key_name
   public_key = file(var.public_key_file)
   tags = {
