@@ -4,5 +4,5 @@
 if [ -f ~/.ssh/minimum_configuration.pem ]; then
   echo "You have already created access key."
 else
-  ssh-keygen -t rsa -f ~/.ssh/minimum_configuration.pem
+  ssh-keygen -t rsa -b 2048 -f ~/.ssh/minimum_configuration.pem
 fi
