@@ -73,14 +73,4 @@ resource "aws_lb_target_group" "tf_alb_tg" {
   }
 }
 
-resource "aws_lb_target_group_attachment" "tf_alb_tgec2_1a" {
-  target_group_arn = aws_lb_target_group.tf_alb_tg.arn
-  target_id        = aws_instance.tf_instance_1a.id
-}
-
-resource "aws_lb_target_group_attachment" "tf_alb_tgec2_1c" {
-  target_group_arn = aws_lb_target_group.tf_alb_tg.arn
-  target_id        = aws_instance.tf_instance_1c.id
-}
-
 data "aws_elb_service_account" "tf_log_service_account" {}

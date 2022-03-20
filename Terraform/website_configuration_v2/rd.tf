@@ -100,3 +100,27 @@ resource "aws_db_instance" "tf_db" {
     Env     = var.environment
   }
 }
+
+# ====================
+#
+# SSM Parameters Store
+#
+# ====================
+
+resource "aws_ssm_parameter" "sp_db_name" {
+  name  = "/${var.project}/${var.environment}/website/MYSQL_DATABASE"
+  type  = "String"
+  value = aws_db_instance.tf_db.db_name
+}
+
+resource "aws_ssm_parameter" "sp_db_user" {
+  name  = "/${var.project}/${var.environment}/website/MYSQL_USERNAME"
+  type  = "SecureString"
+  value = aws_db_instance.tf_db.username
+}
+
+resource "aws_ssm_parameter" "sp_db_password" {
+  name  = "/${var.project}/${var.environment}/website/MYSQL_PASSWORD"
+  type  = "SecureString"
+  value = aws_db_instance.tf_db.password
+}

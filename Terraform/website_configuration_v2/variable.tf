@@ -10,7 +10,7 @@ variable "aws_region" {
 }
 
 variable "project" {
-  default = "website"
+  default = "website_v2"
 }
 
 variable "environment" {

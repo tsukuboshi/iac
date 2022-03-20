@@ -39,59 +39,6 @@ data "aws_ami" "tf_ami" {
   }
 }
 
-
-# ====================
-#
-# EC2 Instance
-#
-# ====================
-
-resource "aws_instance" "tf_instance_1a" {
-  ami                         = data.aws_ami.tf_ami.image_id
-  instance_type               = var.instance_type
-  subnet_id                   = aws_subnet.tf_subnet_1.id
-  associate_public_ip_address = true
-  vpc_security_group_ids      = [aws_security_group.tf_sg_ec2.id]
-
-  root_block_device {
-    volume_type           = var.volume_type
-    volume_size           = var.volume_size
-    delete_on_termination = true
-  }
-
-  key_name  = aws_key_pair.tf_key.id
-  user_data = file(var.user_data_file)
-
-  tags = {
-    Name    = "${var.project}-${var.environment}-ec2-1a"
-    Project = var.project
-    Env     = var.environment
-  }
-}
-
-resource "aws_instance" "tf_instance_1c" {
-  ami                         = data.aws_ami.tf_ami.image_id
-  instance_type               = var.instance_type
-  subnet_id                   = aws_subnet.tf_subnet_2.id
-  associate_public_ip_address = true
-  vpc_security_group_ids      = [aws_security_group.tf_sg_ec2.id]
-
-  root_block_device {
-    volume_type           = var.volume_type
-    volume_size           = var.volume_size
-    delete_on_termination = true
-  }
-
-  key_name  = aws_key_pair.tf_key.id
-  user_data = file(var.user_data_file)
-
-  tags = {
-    Name    = "${var.project}-${var.environment}-ec2-1c"
-    Project = var.project
-    Env     = var.environment
-  }
-}
-
 # ====================
 #
 # Key Pair
@@ -106,5 +53,79 @@ resource "aws_key_pair" "tf_key" {
     Name    = "${var.project}-${var.environment}-keypair"
     Project = var.project
     Env     = var.environment
+  }
+}
+
+# ====================
+#
+# Launch Template
+#
+# ====================
+resource "aws_launch_template" "tf_lt" {
+  update_default_version = true
+
+  name = "${var.project}-${var.environment}-lt"
+
+  image_id = data.aws_ami.tf_ami.id
+
+  key_name = aws_key_pair.tf_key.key_name
+
+  tag_specifications {
+    resource_type = "instance"
+    tags = {
+      Name    = "${var.project}-${var.environment}-asg-ec2"
+      Project = var.project
+      Env     = var.environment
+    }
+  }
+
+  network_interfaces {
+    associate_public_ip_address = false
+    security_groups = [
+      aws_security_group.tf_sg_ec2.id
+    ]
+    delete_on_termination = true
+  }
+
+  iam_instance_profile {
+    name = aws_iam_instance_profile.tf_instance_profile.name
+  }
+
+  user_data = file("./src/user_data.sh")
+}
+
+# ====================
+#
+# Auto Scailing Group
+#
+# ====================
+resource "aws_autoscaling_group" "tf_asg" {
+  name = "${var.project}-${var.environment}-app-asg"
+
+  max_size           = 2
+  min_size           = 1
+  desired_capacity   = 2
+
+  health_check_grace_period = 300
+  health_check_type         = "ELB"
+
+  vpc_zone_identifier = [
+    aws_subnet.tf_subnet_1.id,
+    aws_subnet.tf_subnet_2.id
+  ]
+
+  target_group_arns = [aws_lb_target_group.tf_alb_tg.arn]
+
+  mixed_instances_policy {
+    launch_template {
+      launch_template_specification {
+        launch_template_id = aws_launch_template.tf_lt.id
+        version            = "$Latest"
+      }
+
+      override {
+        instance_type = "t2.micro"
+      }
+    }
   }
 }
