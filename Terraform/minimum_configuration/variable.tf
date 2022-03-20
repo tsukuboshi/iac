@@ -17,11 +17,6 @@ variable "environment" {
   default = "test"
 }
 
-# IAM #
-variable "aws_profile" {
-  default = "kuraboshi"
-}
-
 # EC2 #
 variable "instance_type" {
   default = "t2.micro"
