@@ -47,11 +47,11 @@ data "aws_ami" "tf_ami" {
 # ====================
 
 resource "aws_instance" "tf_instance" {
-  ami                    = data.aws_ami.tf_ami.image_id
-  instance_type          = var.instance_type
-  subnet_id              = aws_subnet.tf_subnet.id
+  ami                         = data.aws_ami.tf_ami.image_id
+  instance_type               = var.instance_type
+  subnet_id                   = aws_subnet.tf_subnet.id
   associate_public_ip_address = true
-  vpc_security_group_ids = [aws_security_group.tf_sg.id]
+  vpc_security_group_ids      = [aws_security_group.tf_sg.id]
 
   root_block_device {
     volume_type           = var.volume_type
@@ -59,8 +59,8 @@ resource "aws_instance" "tf_instance" {
     delete_on_termination = true
   }
 
-  key_name               = aws_key_pair.tf_key.id
-  user_data              = file(var.user_data_file)
+  key_name  = aws_key_pair.tf_key.id
+  user_data = file(var.user_data_file)
 
   tags = {
     Name    = "${var.project}-${var.environment}-ec2"

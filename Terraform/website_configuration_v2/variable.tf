@@ -10,7 +10,7 @@ variable "aws_region" {
 }
 
 variable "project" {
-  default = "website_v2"
+  default = "websitev2"
 }
 
 variable "environment" {
@@ -40,6 +40,18 @@ variable "key_name" {
 
 variable "public_key_file" {
   default = "~/.ssh/website_tf.pem.pub"
+}
+
+variable "max_size" {
+  default = "2"
+}
+
+variable "min_size" {
+  default = "1"
+}
+
+variable "desired_capacity" {
+  default = "2"
 }
 
 # VPC #

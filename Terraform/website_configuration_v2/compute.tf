@@ -91,7 +91,7 @@ resource "aws_launch_template" "tf_lt" {
     name = aws_iam_instance_profile.tf_instance_profile.name
   }
 
-  user_data = file("./src/user_data.sh")
+  user_data = filebase64(var.user_data_file)
 }
 
 # ====================
@@ -100,18 +100,18 @@ resource "aws_launch_template" "tf_lt" {
 #
 # ====================
 resource "aws_autoscaling_group" "tf_asg" {
-  name = "${var.project}-${var.environment}-app-asg"
+  name = "${var.project}-${var.environment}-asg"
 
-  max_size           = 2
-  min_size           = 1
-  desired_capacity   = 2
+  max_size           = var.max_size
+  min_size           = var.min_size
+  desired_capacity   = var.desired_capacity
 
   health_check_grace_period = 300
   health_check_type         = "ELB"
 
   vpc_zone_identifier = [
-    aws_subnet.tf_subnet_1.id,
-    aws_subnet.tf_subnet_2.id
+    aws_subnet.tf_subnet_3.id,
+    aws_subnet.tf_subnet_4.id
   ]
 
   target_group_arns = [aws_lb_target_group.tf_alb_tg.arn]
@@ -124,7 +124,7 @@ resource "aws_autoscaling_group" "tf_asg" {
       }
 
       override {
-        instance_type = "t2.micro"
+        instance_type = var.instance_type
       }
     }
   }
