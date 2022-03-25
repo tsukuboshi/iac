@@ -19,11 +19,4 @@ systemctl enable httpd
 systemctl start httpd
 
 #mysqlクライアントインストール
-yum install -y mysql
-
-#SSH設定
-cat << EOF >> /home/ec2-user/.ssh/config
-# SSH over Session Manager
-host i-* mi-*
-    ProxyCommand sh -c "aws ssm start-session --target %h --document-name AWS-StartSSHSession --parameters 'portNumber=%p'"
-EOF
+yum install mysql-community-client -y
