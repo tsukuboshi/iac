@@ -19,4 +19,4 @@ systemctl enable httpd
 systemctl start httpd
 
 #mysqlクライアントインストール
-yum install mysql-community-client -y
+yum install -y mysql
