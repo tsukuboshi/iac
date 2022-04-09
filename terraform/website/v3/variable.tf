@@ -43,15 +43,15 @@ variable "public_key_file" {
 }
 
 variable "max_size" {
-  default = "2"
+  default = 2
 }
 
 variable "min_size" {
-  default = "1"
+  default = 1
 }
 
 variable "desired_capacity" {
-  default = "2"
+  default = 2
 }
 
 # VPC #
