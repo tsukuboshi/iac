@@ -6,8 +6,8 @@
 
 resource "aws_vpc" "tf_vpc" {
   cidr_block           = var.vpc_cidr_block
-  enable_dns_support   = true # DNS解決有効化
-  enable_dns_hostnames = true # DNSホスト名有効化
+  enable_dns_support   = var.enable_dns_support
+  enable_dns_hostnames = var.vpc_enable_dns_hostnames
 
   tags = {
     Name    = "${var.project}-${var.environment}-vpc"
@@ -18,14 +18,16 @@ resource "aws_vpc" "tf_vpc" {
 
 # ====================
 #
-# Public Subnet
+# Subnet
 #
 # ====================
+
+#パプリックサブネット
 
 resource "aws_subnet" "tf_subnet_1" {
   vpc_id                  = aws_vpc.tf_vpc.id
   cidr_block              = var.subnet_cidr_block_1
-  map_public_ip_on_launch = true #インスタンス起動時におけるパブリックIPアドレスの自動割り当ての有効化
+  map_public_ip_on_launch = true
   availability_zone       = var.availability_zone
 
   tags = {
@@ -35,20 +37,16 @@ resource "aws_subnet" "tf_subnet_1" {
   }
 }
 
-# ====================
-#
-# Private Subnet
-#
-# ====================
+#プライベートサブネット
 
 resource "aws_subnet" "tf_subnet_2" {
   vpc_id                  = aws_vpc.tf_vpc.id
   cidr_block              = var.subnet_cidr_block_2
-  map_public_ip_on_launch = false #インスタンス起動時におけるパブリックIPアドレスの自動割り当ての有効化
+  map_public_ip_on_launch = false
   availability_zone       = var.availability_zone
 
   tags = {
-    Name    = "${var.project}-${var.environment}-subnet-3"
+    Name    = "${var.project}-${var.environment}-subnet-2"
     Project = var.project
     Env     = var.environment
   }

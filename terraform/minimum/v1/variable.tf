@@ -47,8 +47,16 @@ variable "vpc_cidr_block" {
   default = "10.0.0.0/16"
 }
 
+variable "vpc_enable_dns_support" {
+  default = "true"
+}
+
+variable "vpc_enable_dns_hostnames" {
+  default = "false"
+}
+
 variable "subnet_cidr_block" {
-  default = "10.0.1.0/24"
+  default = "10.0.0.0/24"
 }
 
 variable "availability_zone" {
