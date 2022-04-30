@@ -11,8 +11,6 @@ resource "aws_vpc" "tf_vpc" {
 
   tags = {
     Name    = "${var.project}-${var.environment}-vpc"
-    Project = var.project
-    Env     = var.environment
   }
 }
 
@@ -31,8 +29,6 @@ resource "aws_subnet" "tf_subnet" {
 
   tags = {
     Name    = "${var.project}-${var.environment}-subnet"
-    Project = var.project
-    Env     = var.environment
   }
 }
 
@@ -46,8 +42,6 @@ resource "aws_internet_gateway" "tf_igw" {
 
   tags = {
     Name    = "${var.project}-${var.environment}-igw"
-    Project = var.project
-    Env     = var.environment
   }
 }
 
@@ -60,8 +54,6 @@ resource "aws_route_table" "tf_rt" {
   vpc_id = aws_vpc.tf_vpc.id
   tags = {
     Name    = "${var.project}-${var.environment}-rt"
-    Project = var.project
-    Env     = var.environment
   }
 }
 

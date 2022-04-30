@@ -46,11 +46,11 @@ data "aws_ami" "tf_ami" {
 #
 # ====================
 
-resource "aws_instance" "tf_instance" {
+resource "aws_instance" "tf_instance_1a" {
   instance_type               = var.instance_type
-  subnet_id                   = aws_subnet.tf_subnet_2.id
+  subnet_id                   = aws_subnet.tf_subnet_3.id
   associate_public_ip_address = false
-  vpc_security_group_ids      = [aws_security_group.tf_sg.id]
+  vpc_security_group_ids      = [aws_security_group.tf_sg_ec2.id]
   ami                         = data.aws_ami.tf_ami.image_id
   iam_instance_profile        = aws_iam_instance_profile.tf_instance_profile_ssm.name
   user_data                   = file(var.user_data_file)
@@ -66,30 +66,48 @@ resource "aws_instance" "tf_instance" {
     delete_on_termination = var.delete_on_termination
     encrypted             = var.encrypted
     tags = {
-      Name = "${var.project}-${var.environment}-1a"
+      Name = "${var.project}-${var.environment}-web-register-1a"
     }
   }
 
-  key_name  = aws_key_pair.tf_key.id
   tags = {
-    Name = "${var.project}-${var.environment}-1a"
+    Name = "${var.project}-${var.environment}-web-register-1a"
   }
 
   depends_on = [
-    aws_nat_gateway.tf_ngw
+    aws_nat_gateway.tf_ngw_1a
   ]
 }
 
-# ====================
-#
-# Key Pair
-#
-# ====================
+resource "aws_instance" "tf_instance_1c" {
+  instance_type               = var.instance_type
+  subnet_id                   = aws_subnet.tf_subnet_4.id
+  associate_public_ip_address = false
+  vpc_security_group_ids      = [aws_security_group.tf_sg_ec2.id]
+  ami                         = data.aws_ami.tf_ami.image_id
+  iam_instance_profile        = aws_iam_instance_profile.tf_instance_profile_ssm.name
+  user_data                   = file(var.user_data_file)
+  disable_api_termination     = var.disable_api_termination
+  ebs_optimized               = var.ebs_optimized
 
-resource "aws_key_pair" "tf_key" {
-  key_name   = var.key_name
-  public_key = file(var.public_key_file)
-  tags = {
-    Name    = "${var.project}-${var.environment}-keypair"
+  ebs_block_device {
+    device_name           = var.device_name
+    volume_size           = var.volume_size
+    volume_type           = var.volume_type
+    iops                  = var.iops
+    throughput            = var.throughput
+    delete_on_termination = var.delete_on_termination
+    encrypted             = var.encrypted
+    tags = {
+      Name = "${var.project}-${var.environment}-web-register-1c"
+    }
   }
+
+  tags = {
+    Name = "${var.project}-${var.environment}-web-register-1c"
+  }
+
+  depends_on = [
+    aws_nat_gateway.tf_ngw_1c
+  ]
 }

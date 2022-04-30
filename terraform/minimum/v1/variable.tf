@@ -19,15 +19,43 @@ variable "environment" {
 
 # EC2 #
 variable "instance_type" {
-  default = "t2.micro"
+  default = "t3.micro"
 }
 
-variable "volume_type" {
-  default = "gp2"
+variable "disable_api_termination" {
+  default = "false" #本番環境ではtrueに変更
+}
+
+variable "ebs_optimized" {
+  default = "true"
+}
+
+variable "device_name" {
+  default = "/dev/xvda"
 }
 
 variable "volume_size" {
-  default = "8"
+  default = 30
+}
+
+variable "volume_type" {
+  default = "gp3"
+}
+
+variable "iops" {
+  default = 3000
+}
+
+variable "throughput" {
+  default = 125
+}
+
+variable "delete_on_termination" {
+  default = "true"
+}
+
+variable "encrypted" {
+  default = false
 }
 
 variable "user_data_file" {

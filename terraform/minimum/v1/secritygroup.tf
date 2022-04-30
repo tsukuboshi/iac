@@ -9,8 +9,6 @@ resource "aws_security_group" "tf_sg" {
 
   tags = {
     Name    = "${var.project}-${var.environment}-sg"
-    Project = var.project
-    Env     = var.environment
   }
 }
 
@@ -22,16 +20,6 @@ resource "aws_security_group_rule" "in_ssh" {
   from_port         = 22
   to_port           = 22
   protocol          = "tcp"
-}
-
-# インバウンドルール(ping疎通確認用)
-resource "aws_security_group_rule" "in_icmp" {
-  security_group_id = aws_security_group.tf_sg.id
-  type              = "ingress"
-  cidr_blocks       = ["0.0.0.0/0"]
-  from_port         = -1
-  to_port           = -1
-  protocol          = "icmp"
 }
 
 # アウトバウンドルール(全開放)

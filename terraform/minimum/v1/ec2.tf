@@ -47,25 +47,32 @@ data "aws_ami" "tf_ami" {
 # ====================
 
 resource "aws_instance" "tf_instance" {
-  ami                         = data.aws_ami.tf_ami.image_id
   instance_type               = var.instance_type
   subnet_id                   = aws_subnet.tf_subnet.id
   associate_public_ip_address = true
   vpc_security_group_ids      = [aws_security_group.tf_sg.id]
+  ami                         = data.aws_ami.tf_ami.image_id
+  iam_instance_profile        = aws_iam_instance_profile.tf_instance_profile_ssm.name
+  user_data                   = file(var.user_data_file)
+  disable_api_termination     = var.disable_api_termination
+  ebs_optimized               = var.ebs_optimized
 
-  root_block_device {
-    volume_type           = var.volume_type
+  ebs_block_device {
+    device_name           = var.device_name
     volume_size           = var.volume_size
-    delete_on_termination = true
+    volume_type           = var.volume_type
+    iops                  = var.iops
+    throughput            = var.throughput
+    delete_on_termination = var.delete_on_termination
+    encrypted             = var.encrypted
+    tags = {
+      Name = "${var.project}-${var.environment}-1a"
+    }
   }
 
   key_name  = aws_key_pair.tf_key.id
-  user_data = file(var.user_data_file)
-
   tags = {
-    Name    = "${var.project}-${var.environment}-ec2"
-    Project = var.project
-    Env     = var.environment
+    Name = "${var.project}-${var.environment}-1a"
   }
 }
 
@@ -80,7 +87,5 @@ resource "aws_key_pair" "tf_key" {
   public_key = file(var.public_key_file)
   tags = {
     Name    = "${var.project}-${var.environment}-keypair"
-    Project = var.project
-    Env     = var.environment
   }
 }

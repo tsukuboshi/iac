@@ -9,8 +9,6 @@ resource "aws_security_group" "tf_sg" {
 
   tags = {
     Name    = "${var.project}-${var.environment}-sg"
-    Project = var.project
-    Env     = var.environment
   }
 }
 

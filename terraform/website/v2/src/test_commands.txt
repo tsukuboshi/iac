@@ -1,0 +1,13 @@
+#HTTPS接続確認
+ALB_DNS_NAME="$(terraform output -json | jq -r .domain_url.value)"
+watch -n 1 "curl ${ALB_DNS_NAME}"
+
+
+#MySQL接続確認
+INSTANCE_ID_1A="$(terraform output -json | jq -r .instance_id_1a.value)"
+aws ssm start-session --target ${INSTANCE_ID_1A}
+
+INSTANCE_ID_1C="$(terraform output -json | jq -r .instance_id_1c.value)"
+aws ssm start-session --target ${INSTANCE_ID_1C}
+
+mysql -u <db_username> -p<db_password> -h <rds_endpoint>

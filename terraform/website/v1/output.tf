@@ -4,22 +4,18 @@
 #
 # ====================
 
-output "alb_dns_name" {
-  value = aws_lb.tf_alb.dns_name
+output "instance_1a_id" {
+  value = aws_instance.tf_instance_1a.id
 }
 
-output "instance_1a_public_ip" {
-  value = aws_instance.tf_instance_1a.public_ip
+output "instance_1c_id" {
+  value = aws_instance.tf_instance_1c.id
 }
 
-output "instance_1c_public_ip" {
-  value = aws_instance.tf_instance_1c.public_ip
+output "domain_url" {
+  value = "https://${data.aws_route53_zone.tf_route53_zone.name}"
 }
 
 output "rds_endpoint" {
-  value = aws_db_instance.tf_db.endpoint
-}
-
-output "db_password" {
-  value = var.db_password
+  value = aws_rds_cluster.tf_rds_cluster.endpoint
 }
