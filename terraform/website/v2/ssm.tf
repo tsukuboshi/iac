@@ -1,18 +1,35 @@
-
 # ====================
 #
 # SSM Parameter Store
 #
 # ====================
 
-resource "aws_ssm_parameter" "tf_rds_master_username" {
-  name  = "/${var.project}/${var.environment}/app/MYSQL_USERNAME"
+resource "aws_ssm_parameter" "tf_rds_db_name" {
+  name  = "/${var.project}/${var.environment}/DB_NAME"
   type  = "SecureString"
-  value = aws_rds_cluster.tf_rds_cluster.master_username
+  value = var.db_name
 }
 
-resource "aws_ssm_parameter" "tf_rds_master_password" {
-  name  = "/${var.project}/${var.environment}/app/MYSQL_PASSWORD"
+resource "aws_ssm_parameter" "tf_rds_root_name" {
+  name  = "/${var.project}/${var.environment}/DB_ROOT_NAME"
   type  = "SecureString"
-  value = aws_rds_cluster.tf_rds_cluster.master_password
+  value = var.db_root_name
+}
+
+resource "aws_ssm_parameter" "tf_rds_root_pass" {
+  name  = "/${var.project}/${var.environment}/DB_ROOT_PASS"
+  type  = "SecureString"
+  value = var.db_root_pass
+}
+
+resource "aws_ssm_parameter" "tf_rds_user_name" {
+  name  = "/${var.project}/${var.environment}/DB_USER_NAME"
+  type  = "SecureString"
+  value = var.db_user_name
+}
+
+resource "aws_ssm_parameter" "tf_rds_user_pass" {
+  name  = "/${var.project}/${var.environment}/DB_USER_PASS"
+  type  = "SecureString"
+  value = var.db_user_pass
 }

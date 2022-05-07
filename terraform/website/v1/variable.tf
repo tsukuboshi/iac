@@ -75,10 +75,6 @@ variable "expiration_days" {
   default = 400
 }
 
-variable "bucket_policy_document_file" {
-  default = "./src/bucket_policy_document.json"
-}
-
 variable "file_format" {
   default = "parquet"
 }
@@ -93,7 +89,7 @@ variable "per_hour_partition" {
 
 # EC2 #
 variable "instance_type" {
-  default = "m5.large"
+  default = "t3.micro"
 }
 
 variable "disable_api_termination" {
@@ -104,42 +100,42 @@ variable "ebs_optimized" {
   default = "true"
 }
 
-variable "device_name" {
+variable "ebs_device_name" {
   default = "/dev/xvda"
 }
 
-variable "volume_size" {
+variable "ebs_volume_size" {
   default = 30
 }
 
-variable "volume_type" {
+variable "ebs_volume_type" {
   default = "gp3"
 }
 
-variable "iops" {
+variable "ebs_iops" {
   default = 3000
 }
 
-variable "throughput" {
+variable "ebs_throughput" {
   default = 125
 }
 
-variable "delete_on_termination" {
+variable "ebs_delete_on_termination" {
   default = "true"
 }
 
-variable "encrypted" {
+variable "ebs_encrypted" {
   default = false
 }
 
 variable "user_data_file" {
-  default = "./src/user_data.sh"
+  default = "./src/user_data_cms.tpl"
 }
 
 # ALB #
 
 variable "alb_log_prefix" {
-  default = "jagaba-prd-alb"
+  default = "alb-log"
 }
 
 variable "enable_deletion_protection" {
@@ -179,11 +175,21 @@ variable "matcher" {
 }
 
 # RDS #
-variable "username" {
+variable "db_name" {
+  default = "wpdb"
+}
+
+variable "db_root_name" {
   default = "admin"
 }
 
-variable "password" {}
+variable "db_root_pass" {}
+
+variable "db_user_name" {
+  default = "wpuser"
+}
+
+variable "db_user_pass" {}
 
 variable "storage_encrypted" {
   default = "false"
@@ -214,7 +220,7 @@ variable "apply_immediately" {
 }
 
 variable "instance_class" {
-  default = "db.r6g.large"
+  default = "db.t4g.medium"
 }
 
 variable "performance_insights_enabled" {
@@ -256,16 +262,4 @@ variable "protect_from_scale_in" {
 
 variable "target_value" {
   default = 50
-}
-
-# Route53 #
-variable "registered_domain" {}
-
-# WAF #
-variable "cloudwatch_metrics_enabled" {
-  default = "true"
-}
-
-variable "sampled_requests_enabled" {
-  default = "true"
 }

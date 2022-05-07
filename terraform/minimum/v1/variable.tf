@@ -59,7 +59,7 @@ variable "encrypted" {
 }
 
 variable "user_data_file" {
-  default = "./src/user_data.sh"
+  default = "./src/user_data.tpl"
 }
 
 variable "key_name" {

@@ -8,7 +8,7 @@ resource "aws_security_group" "tf_sg" {
   vpc_id = aws_vpc.tf_vpc.id
 
   tags = {
-    Name    = "${var.project}-${var.environment}-sg"
+    Name = "${var.project}-${var.environment}-sg"
   }
 }
 

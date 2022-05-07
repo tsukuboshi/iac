@@ -70,7 +70,7 @@ resource "aws_instance" "tf_instance" {
     }
   }
 
-  key_name  = aws_key_pair.tf_key.id
+  key_name = aws_key_pair.tf_key.id
   tags = {
     Name = "${var.project}-${var.environment}-1a"
   }
@@ -90,6 +90,6 @@ resource "aws_key_pair" "tf_key" {
   key_name   = var.key_name
   public_key = file(var.public_key_file)
   tags = {
-    Name    = "${var.project}-${var.environment}-keypair"
+    Name = "${var.project}-${var.environment}-keypair"
   }
 }

@@ -29,13 +29,6 @@ resource "aws_s3_bucket_public_access_block" "tf_public_access_block_alb_log" {
   depends_on              = [aws_s3_bucket_policy.tf_bucket_policy_alb_log]
 }
 
-resource "aws_s3_bucket_versioning" "tf_bucket_versioning_alb_log" {
-  bucket = aws_s3_bucket.tf_bucket_alb_log.id
-  versioning_configuration {
-    status = "Disabled"
-  }
-}
-
 resource "aws_s3_bucket_lifecycle_configuration" "tf_bucket_lifecycle_configuration_alb_log" {
   bucket = aws_s3_bucket.tf_bucket_alb_log.id
   rule {
@@ -112,13 +105,6 @@ resource "aws_s3_bucket_public_access_block" "tf_public_access_block_vpc_log" {
   restrict_public_buckets = true
 }
 
-resource "aws_s3_bucket_versioning" "tf_bucket_versioning_vpc_log" {
-  bucket = aws_s3_bucket.tf_bucket_vpc_log.id
-  versioning_configuration {
-    status = "Disabled"
-  }
-}
-
 resource "aws_s3_bucket_lifecycle_configuration" "tf_bucket_lifecycle_configuration_vpc_log" {
   bucket = aws_s3_bucket.tf_bucket_vpc_log.id
   rule {
@@ -152,13 +138,6 @@ resource "aws_s3_bucket_public_access_block" "tf_public_access_block_waf_log" {
   restrict_public_buckets = true
 }
 
-resource "aws_s3_bucket_versioning" "tf_bucket_versioning_waf_log" {
-  bucket = aws_s3_bucket.tf_bucket_waf_log.id
-  versioning_configuration {
-    status = "Disabled"
-  }
-}
-
 resource "aws_s3_bucket_lifecycle_configuration" "tf_bucket_lifecycle_configuration_waf_log" {
   bucket = aws_s3_bucket.tf_bucket_waf_log.id
   rule {
@@ -168,4 +147,82 @@ resource "aws_s3_bucket_lifecycle_configuration" "tf_bucket_lifecycle_configurat
     }
     status = "Enabled"
   }
+}
+
+#CloudFrontログ用バケット
+resource "aws_s3_bucket" "tf_bucket_cf_log" {
+  bucket        = "aws-cf-logs-${var.project}-${var.environment}-${data.aws_caller_identity.tf_caller_identity.account_id}"
+  force_destroy = var.force_destroy
+}
+
+resource "aws_s3_bucket_public_access_block" "tf_public_access_block_cf_log" {
+  bucket                  = aws_s3_bucket.tf_bucket_cf_log.id
+  block_public_acls       = true
+  block_public_policy     = true
+  ignore_public_acls      = true
+  restrict_public_buckets = true
+}
+
+resource "aws_s3_bucket_lifecycle_configuration" "tf_bucket_lifecycle_configuration_cf_log" {
+  bucket = aws_s3_bucket.tf_bucket_cf_log.id
+  rule {
+    id = "log"
+    expiration {
+      days = var.expiration_days
+    }
+    status = "Enabled"
+  }
+}
+
+#CloudFront静的コンテンツ用バケット
+resource "aws_s3_bucket" "tf_bucket_cf_static" {
+  bucket        = "aws-cf-static-${var.project}-${var.environment}-${data.aws_caller_identity.tf_caller_identity.account_id}"
+  force_destroy = var.force_destroy
+}
+
+resource "aws_s3_bucket_public_access_block" "tf_public_access_block_cf_static" {
+  bucket                  = aws_s3_bucket.tf_bucket_cf_static.id
+  block_public_acls       = true
+  block_public_policy     = true
+  ignore_public_acls      = true
+  restrict_public_buckets = true
+}
+
+resource "aws_s3_bucket_versioning" "tf_bucket_versioning_cf_static" {
+  bucket = aws_s3_bucket.tf_bucket_cf_static.id
+  versioning_configuration {
+    status = "Enabled"
+  }
+}
+
+resource "aws_s3_bucket_policy" "tf_bucket_policy_cf_static" {
+  bucket = aws_s3_bucket.tf_bucket_cf_static.id
+  policy = data.aws_iam_policy_document.tf_iam_policy_document_cf_static.json
+}
+
+data "aws_iam_policy_document" "tf_iam_policy_document_cf_static" {
+  statement {
+    effect    = "Allow"
+    actions   = ["s3:GetObject"]
+    resources = ["${aws_s3_bucket.tf_bucket_cf_static.arn}/*"]
+    principals {
+      type        = "AWS"
+      identifiers = [aws_cloudfront_origin_access_identity.tf_cf_s3_origin_access_identity.iam_arn]
+    }
+  }
+}
+
+resource "aws_s3_bucket_website_configuration" "tf_bucket_website_cf_static" {
+  bucket = aws_s3_bucket.tf_bucket_cf_static.bucket
+
+  index_document {
+    suffix = "index.html"
+  }
+}
+
+resource "aws_s3_object" "static_index_object" {
+  bucket = aws_s3_bucket.tf_bucket_cf_static.id
+  key    = "index.html"
+  source = "src/index.html"
+  etag   = filemd5("src/index.html")
 }

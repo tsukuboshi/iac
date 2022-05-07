@@ -17,12 +17,6 @@ resource "aws_lb" "tf_alb" {
     aws_security_group.tf_sg_alb.id
   ]
 
-  access_logs {
-    bucket  = aws_s3_bucket.tf_bucket_alb_log.bucket
-    prefix  = var.alb_log_prefix
-    enabled = true
-  }
-
   enable_deletion_protection = var.enable_deletion_protection
 }
 
@@ -32,28 +26,10 @@ resource "aws_lb" "tf_alb" {
 #
 # ====================
 
-resource "aws_lb_listener" "example_alb_lsnr_http" {
+resource "aws_lb_listener" "alb_listener_http" {
   load_balancer_arn = aws_lb.tf_alb.arn
-  port              = 80
+  port              = "80"
   protocol          = "HTTP"
-
-  default_action {
-    type = "redirect"
-
-    redirect {
-      port        = 443
-      protocol    = "HTTPS"
-      status_code = "HTTP_301"
-    }
-  }
-}
-
-resource "aws_lb_listener" "tf_alb_lsnr_https" {
-  load_balancer_arn = aws_lb.tf_alb.arn
-  port              = 443
-  protocol          = "HTTPS"
-  ssl_policy        = "ELBSecurityPolicy-2016-08"
-  certificate_arn   = aws_acm_certificate.tf_acm_cert.arn
 
   default_action {
     type             = "forward"

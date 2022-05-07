@@ -1,6 +1,6 @@
 # ====================
 #
-# ALB
+# Load Balancer
 #
 # ====================
 resource "aws_lb" "tf_alb" {
@@ -32,32 +32,42 @@ resource "aws_lb" "tf_alb" {
 #
 # ====================
 
-resource "aws_lb_listener" "example_alb_lsnr_http" {
-  load_balancer_arn = aws_lb.tf_alb.arn
-  port              = 80
-  protocol          = "HTTP"
-
-  default_action {
-    type = "redirect"
-
-    redirect {
-      port        = 443
-      protocol    = "HTTPS"
-      status_code = "HTTP_301"
-    }
-  }
-}
-
 resource "aws_lb_listener" "tf_alb_lsnr_https" {
   load_balancer_arn = aws_lb.tf_alb.arn
   port              = 443
   protocol          = "HTTPS"
   ssl_policy        = "ELBSecurityPolicy-2016-08"
-  certificate_arn   = aws_acm_certificate.tf_acm_cert.arn
+  certificate_arn   = aws_acm_certificate.tf_acm_alb_cert.arn
 
   default_action {
+    type = "fixed-response"
+
+    fixed_response {
+      content_type = "text/plain"
+      message_body = "Not Found"
+      status_code  = "404"
+    }
+  }
+
+  depends_on = [
+    aws_acm_certificate_validation.tf_acm_alb_cert_valid
+  ]
+}
+
+resource "aws_lb_listener_rule" "tf_alb_listener_rule_access" {
+  listener_arn = aws_lb_listener.tf_alb_lsnr_https.arn
+  priority     = 100
+
+  action {
     type             = "forward"
     target_group_arn = aws_lb_target_group.tf_alb_tg.arn
+  }
+
+  condition {
+    http_header {
+      http_header_name = var.custom_header_name
+      values           = [var.custom_header_value]
+    }
   }
 }
 
@@ -68,7 +78,7 @@ resource "aws_lb_listener" "tf_alb_lsnr_https" {
 # ====================
 
 resource "aws_lb_target_group" "tf_alb_tg" {
-  name                          = "${var.project}-${var.environment}-web-tg"
+  name                          = "${var.project}-${var.environment}-web-tg-${substr(uuid(), 0, 6)}"
   target_type                   = "instance"
   port                          = 80
   protocol                      = "HTTP"
@@ -86,6 +96,11 @@ resource "aws_lb_target_group" "tf_alb_tg" {
     timeout             = var.timeout
     interval            = var.interval
     matcher             = var.matcher
+  }
+
+  lifecycle {
+    create_before_destroy = true
+    ignore_changes        = [name]
   }
 }
 

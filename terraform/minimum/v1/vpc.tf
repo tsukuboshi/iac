@@ -10,7 +10,7 @@ resource "aws_vpc" "tf_vpc" {
   enable_dns_hostnames = var.vpc_enable_dns_hostnames
 
   tags = {
-    Name    = "${var.project}-${var.environment}-vpc"
+    Name = "${var.project}-${var.environment}-vpc"
   }
 }
 
@@ -28,7 +28,7 @@ resource "aws_subnet" "tf_subnet" {
   availability_zone       = var.availability_zone
 
   tags = {
-    Name    = "${var.project}-${var.environment}-subnet"
+    Name = "${var.project}-${var.environment}-subnet"
   }
 }
 
@@ -41,7 +41,7 @@ resource "aws_internet_gateway" "tf_igw" {
   vpc_id = aws_vpc.tf_vpc.id
 
   tags = {
-    Name    = "${var.project}-${var.environment}-igw"
+    Name = "${var.project}-${var.environment}-igw"
   }
 }
 
@@ -53,7 +53,7 @@ resource "aws_internet_gateway" "tf_igw" {
 resource "aws_route_table" "tf_rt" {
   vpc_id = aws_vpc.tf_vpc.id
   tags = {
-    Name    = "${var.project}-${var.environment}-rt"
+    Name = "${var.project}-${var.environment}-rt"
   }
 }
 

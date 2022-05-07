@@ -12,8 +12,12 @@ output "instance_1c_id" {
   value = aws_instance.tf_instance_1c.id
 }
 
-output "domain_url" {
-  value = "https://${data.aws_route53_zone.tf_route53_zone.name}"
+output "alb_dns_name" {
+  value = aws_lb.tf_alb.dns_name
+}
+
+output "url_for_wordpress_install" {
+  value = "http://${aws_lb.tf_alb.dns_name}/blog/wp-admin/install.php"
 }
 
 output "rds_endpoint" {

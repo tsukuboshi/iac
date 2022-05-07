@@ -10,7 +10,7 @@ resource "aws_vpc" "tf_vpc" {
   enable_dns_hostnames = var.vpc_enable_dns_hostnames
 
   tags = {
-    Name    = "${var.project}-${var.environment}-vpc"
+    Name = "${var.project}-${var.environment}-vpc"
   }
 }
 
@@ -29,7 +29,7 @@ resource "aws_subnet" "tf_subnet_1" {
   availability_zone       = var.availability_zone
 
   tags = {
-    Name    = "${var.project}-${var.environment}-subnet-1"
+    Name = "${var.project}-${var.environment}-subnet-1"
   }
 }
 
@@ -42,7 +42,7 @@ resource "aws_subnet" "tf_subnet_2" {
   availability_zone       = var.availability_zone
 
   tags = {
-    Name    = "${var.project}-${var.environment}-subnet-2"
+    Name = "${var.project}-${var.environment}-subnet-2"
   }
 }
 
@@ -55,7 +55,7 @@ resource "aws_internet_gateway" "tf_igw" {
   vpc_id = aws_vpc.tf_vpc.id
 
   tags = {
-    Name    = "${var.project}-${var.environment}-igw"
+    Name = "${var.project}-${var.environment}-igw"
   }
 }
 
@@ -70,7 +70,7 @@ resource "aws_eip" "tf_eip" {
   depends_on = [aws_internet_gateway.tf_igw]
 
   tags = {
-    Name    = "${var.project}-${var.environment}-eip"
+    Name = "${var.project}-${var.environment}-eip"
   }
 }
 
@@ -101,7 +101,7 @@ resource "aws_nat_gateway" "tf_ngw" {
 resource "aws_route_table" "tf_public_rt" {
   vpc_id = aws_vpc.tf_vpc.id
   tags = {
-    Name    = "${var.project}-${var.environment}-rt"
+    Name = "${var.project}-${var.environment}-rt"
   }
 }
 
@@ -120,7 +120,7 @@ resource "aws_route_table_association" "tf_public_subrt" {
 resource "aws_route_table" "tf_private_rt" {
   vpc_id = aws_vpc.tf_vpc.id
   tags = {
-    Name    = "${var.project}-${var.environment}-private-rt"
+    Name = "${var.project}-${var.environment}-private-rt"
   }
 }
 
