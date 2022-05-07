@@ -59,6 +59,7 @@ resource "aws_instance" "tf_instance_1a" {
   user_data = templatefile(
     var.user_data_file,
     {
+      EFS_ID       = aws_efs_file_system.tf_efs_file_system.id
       DB_HOST      = aws_rds_cluster.tf_rds_cluster.endpoint
       DB_NAME      = var.db_name
       DB_ROOT_NAME = var.db_root_name
@@ -77,7 +78,7 @@ resource "aws_instance" "tf_instance_1a" {
     delete_on_termination = var.ebs_delete_on_termination
     encrypted             = var.ebs_encrypted
     tags = {
-      Name = "${var.project}-${var.environment}-web-1a"
+      Name = "${var.project}-${var.environment}-web-1a-ebs"
     }
   }
 
@@ -97,12 +98,13 @@ resource "aws_instance" "tf_instance_1c" {
   vpc_security_group_ids      = [aws_security_group.tf_sg_ec2.id]
   ami                         = data.aws_ami.tf_ami.image_id
   iam_instance_profile        = aws_iam_instance_profile.tf_instance_profile_ssm.name
-  disable_api_termination = var.disable_api_termination
-  ebs_optimized           = var.ebs_optimized
+  disable_api_termination     = var.disable_api_termination
+  ebs_optimized               = var.ebs_optimized
 
   user_data = templatefile(
     var.user_data_file,
     {
+      EFS_ID       = aws_efs_file_system.tf_efs_file_system.id
       DB_HOST      = aws_rds_cluster.tf_rds_cluster.endpoint
       DB_NAME      = var.db_name
       DB_ROOT_NAME = var.db_root_name
@@ -122,7 +124,7 @@ resource "aws_instance" "tf_instance_1c" {
     delete_on_termination = var.ebs_delete_on_termination
     encrypted             = var.ebs_encrypted
     tags = {
-      Name = "${var.project}-${var.environment}-web-1c"
+      Name = "${var.project}-${var.environment}-web-1c-ebs"
     }
   }
 

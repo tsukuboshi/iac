@@ -13,6 +13,12 @@
 #ソフトウェアパッケージ最新バージョン取得
 yum update -y
 
+#EFSマウントヘルパー導入
+yum install -y amazon-efs-utils
+
+#EFSマウント設定
+echo "${EFS_ID}:/ /var/www/html efs defaults,_netdev 0 0" >> /etc/fstab
+
 #Apache導入
 yum install -y httpd
 
@@ -21,6 +27,9 @@ amazon-linux-extras install php7.2
 
 #MySQL(クライアント)導入
 yum install -y mysql
+
+#ファイルシステムマウント
+mount -a
 
 #Apache起動
 systemctl start httpd
@@ -39,13 +48,10 @@ chmod 2775 /var/www
 find /var/www -type d -exec sudo chmod 2775 {} \;
 find /var/www -type f -exec sudo chmod 0664 {} \;
 
-#WordPressインストールパッケージダウンロード
-wget https://wordpress.org/latest.tar.gz
+#.htaccessファイル有効化(WordPressパーマネントリンクの使用に必須)
+sed -i '/<Directory "\/var\/www\/html">/,/<\/Directory>/ s/AllowOverride None/AllowOverride All/' /etc/httpd/conf/httpd.conf
 
-#WordPressインストールパッケージ解凍
-tar -xzf latest.tar.gz
-
-#一方のEC2インスタンス(instance_1a)でのみ、RDSへのクエリを実行
+#一方のEC2インスタンス(instance_1a)でのみRDS用クエリを実行
 if [ "$(curl -s http://169.254.169.254/latest/meta-data/placement/availability-zone)" == ${AZ_1} ]; then
 
   #WordPress用DBユーザ作成
@@ -62,21 +68,28 @@ if [ "$(curl -s http://169.254.169.254/latest/meta-data/placement/availability-z
 
 fi
 
+
+#作業ディレクトリ移動
+cd /tmp
+
+#WordPressインストールパッケージダウンロード
+wget https://wordpress.org/latest.tar.gz
+
+#WordPressインストールパッケージ解凍
+tar -xzf latest.tar.gz
+
 #WordPress構成ファイルサンプルコピー
-cp wordpress/wp-config-sample.php wordpress/wp-config.php
+cp /tmp/wordpress/wp-config-sample.php /tmp/wordpress/wp-config.php
 
 #WordPress構成ファイル書き換え
-sed -i "s/database_name_here/${DB_NAME}/g" wordpress/wp-config.php
-sed -i "s/username_here/${DB_ROOT_NAME}/g" wordpress/wp-config.php
-sed -i "s/password_here/${DB_ROOT_PASS}/g" wordpress/wp-config.php
-sed -i "s/localhost/${DB_HOST}/g" wordpress/wp-config.php
+sed -i "s/database_name_here/${DB_NAME}/g" /tmp/wordpress/wp-config.php
+sed -i "s/username_here/${DB_ROOT_NAME}/g" /tmp/wordpress/wp-config.php
+sed -i "s/password_here/${DB_ROOT_PASS}/g" /tmp/wordpress/wp-config.php
+sed -i "s/localhost/${DB_HOST}/g" /tmp/wordpress/wp-config.php
 
 #WordPress構成ファイルコピー
 mkdir /var/www/html/blog
-cp -r wordpress/* /var/www/html/blog/
-
-#.htaccessファイル有効化(WordPressパーマネントリンクの使用に必須)
-sed -i '/<Directory "\/var\/www\/html">/,/<\/Directory>/ s/AllowOverride None/AllowOverride All/' /etc/httpd/conf/httpd.conf
+cp -r /tmp/wordpress/* /var/www/html/blog/
 
 #Apache再起動
 systemctl restart httpd
