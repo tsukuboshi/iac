@@ -51,14 +51,14 @@ find /var/www -type f -exec sudo chmod 0664 {} \;
 #.htaccessファイル有効化(WordPressパーマネントリンクの使用に必須)
 sed -i '/<Directory "\/var\/www\/html">/,/<\/Directory>/ s/AllowOverride None/AllowOverride All/' /etc/httpd/conf/httpd.conf
 
-#一方のEC2インスタンス(instance_1a)でのみRDS用クエリを実行
-if [ "$(curl -s http://169.254.169.254/latest/meta-data/placement/availability-zone)" == ${AZ_1} ]; then
-
-  #WordPress用DBユーザ作成
-  mysql -h ${DB_HOST} -u ${DB_ROOT_NAME} -p${DB_ROOT_PASS} -e "CREATE USER '${DB_USER_NAME}'@'localhost' IDENTIFIED BY '${DB_USER_PASS}';"
+#WordPress用データベースが存在しない場合のみRDS用クエリを実行
+if [ -z `mysql -h ${DB_HOST} -u ${DB_ROOT_NAME} -p${DB_ROOT_PASS} -e "SHOW DATABASES LIKE '${DB_NAME}'" --batch --skip-column-names` ]; then
 
   #WordPress用データベース作成
   mysql -h ${DB_HOST} -u ${DB_ROOT_NAME} -p${DB_ROOT_PASS} -e "CREATE DATABASE ${DB_NAME};"
+
+  #WordPress用DBユーザ作成
+  mysql -h ${DB_HOST} -u ${DB_ROOT_NAME} -p${DB_ROOT_PASS} -e "CREATE USER '${DB_USER_NAME}'@'localhost' IDENTIFIED BY '${DB_USER_PASS}';"
 
   #DBユーザへのデータベース管理権限付与
   mysql -h ${DB_HOST} -u ${DB_ROOT_NAME} -p${DB_ROOT_PASS} -e "GRANT ALL PRIVILEGES ON ${DB_NAME}.* TO '${DB_USER_NAME}'@'localhost';"

@@ -179,11 +179,21 @@ variable "matcher" {
 }
 
 # RDS #
-variable "username" {
+variable "db_name" {
+  default = "wpdb"
+}
+
+variable "db_root_name" {
   default = "admin"
 }
 
-variable "password" {}
+variable "db_root_pass" {}
+
+variable "db_user_name" {
+  default = "wpuser"
+}
+
+variable "db_user_pass" {}
 
 variable "storage_encrypted" {
   default = "false"
@@ -318,46 +328,6 @@ variable "default_cb_max_ttl" {
 
 variable "default_cb_compress" {
   default = "false"
-}
-
-variable "ordered_cb_path_pattern" {
-  default = "/static/*"
-}
-
-variable "ordered_cb_allowed_methods" {
-  default = ["GET", "HEAD"]
-}
-
-variable "ordered_cb_cached_methods" {
-  default = ["GET", "HEAD"]
-}
-
-variable "ordered_cb_query_string" {
-  default = "false"
-}
-
-variable "ordered_cb_cookies_forward" {
-  default = "none"
-}
-
-variable "ordered_cb_viewer_protocol_policy" {
-  default = "redirect-to-https"
-}
-
-variable "ordered_cb_min_ttl" {
-  default = 0
-}
-
-variable "ordered_cb_default_ttl" {
-  default = 86400
-}
-
-variable "ordered_cb_max_ttl" {
-  default = 31536000
-}
-
-variable "ordered_cb_compress" {
-  default = "true"
 }
 
 variable "cf_geo_restriction_type" {
