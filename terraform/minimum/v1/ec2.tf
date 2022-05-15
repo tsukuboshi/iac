@@ -58,34 +58,18 @@ resource "aws_instance" "tf_instance" {
   ebs_optimized               = var.ebs_optimized
 
   ebs_block_device {
-    device_name           = var.device_name
-    volume_size           = var.volume_size
-    volume_type           = var.volume_type
-    iops                  = var.iops
-    throughput            = var.throughput
-    delete_on_termination = var.delete_on_termination
-    encrypted             = var.encrypted
+    device_name           = var.ebs_device_name
+    volume_size           = var.ebs_volume_size
+    volume_type           = var.ebs_volume_type
+    iops                  = var.ebs_iops
+    throughput            = var.ebs_throughput
+    delete_on_termination = var.ebs_delete_on_termination
+    encrypted             = var.ebs_encrypted
     tags = {
       Name = "${var.project}-${var.environment}-1a"
     }
   }
-
-  key_name = aws_key_pair.tf_key.id
   tags = {
     Name = "${var.project}-${var.environment}-1a"
-  }
-}
-
-# ====================
-#
-# Key Pair
-#
-# ====================
-
-resource "aws_key_pair" "tf_key" {
-  key_name   = var.key_name
-  public_key = file(var.public_key_file)
-  tags = {
-    Name = "${var.project}-${var.environment}-keypair"
   }
 }

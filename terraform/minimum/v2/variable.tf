@@ -30,44 +30,36 @@ variable "ebs_optimized" {
   default = "true"
 }
 
-variable "device_name" {
+variable "ebs_device_name" {
   default = "/dev/xvda"
 }
 
-variable "volume_size" {
+variable "ebs_volume_size" {
   default = 30
 }
 
-variable "volume_type" {
+variable "ebs_volume_type" {
   default = "gp3"
 }
 
-variable "iops" {
+variable "ebs_iops" {
   default = 3000
 }
 
-variable "throughput" {
+variable "ebs_throughput" {
   default = 125
 }
 
-variable "delete_on_termination" {
+variable "ebs_delete_on_termination" {
   default = "true"
 }
 
-variable "encrypted" {
+variable "ebs_encrypted" {
   default = false
 }
 
 variable "user_data_file" {
   default = "./src/user_data.tpl"
-}
-
-variable "key_name" {
-  default = "minimum"
-}
-
-variable "public_key_file" {
-  default = "~/.ssh/minimum_tf.pem.pub"
 }
 
 # VPC #
