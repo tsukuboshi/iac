@@ -129,7 +129,7 @@ variable "ebs_encrypted" {
 }
 
 variable "user_data_file" {
-  default = "./src/user_data_cms.tpl"
+  default = "./src/user_data_am.tpl"
 }
 
 # ALB #
@@ -175,6 +175,14 @@ variable "matcher" {
 }
 
 # RDS #
+variable "db_instance_count" {
+  default = 1
+}
+
+variable "db_instance_class" {
+  default = "db.r6g.large"
+}
+
 variable "db_name" {
   default = "wpdb"
 }
@@ -191,75 +199,86 @@ variable "db_user_name" {
 
 variable "db_user_pass" {}
 
-variable "storage_encrypted" {
+variable "db_storage_encrypted" {
   default = "false"
 }
 
-variable "backup_retention_period" {
+variable "db_backup_retention_period" {
   default = 7
 }
 
-variable "backup_window" {
+variable "db_backup_window" {
   default = "15:00-15:30"
 }
 
-variable "maintenance_window" {
+variable "db_maintenance_window" {
   default = "Sat:16:00-Sat:16:30"
 }
 
-variable "deletion_protection" {
+variable "db_deletion_protection" {
   default = "false" #本番環境ではtrueに変更
 }
 
-variable "skip_final_snapshot" {
+variable "db_performance_insights_enabled" {
   default = "true"
 }
 
-variable "apply_immediately" {
-  default = "true"
-}
-
-variable "instance_class" {
-  default = "db.t4g.medium"
-}
-
-variable "performance_insights_enabled" {
-  default = "true"
-}
-
-variable "performance_insights_retention_period" {
+variable "db_performance_insights_retention_period" {
   default = 7
 }
 
-variable "monitoring_interval" {
+variable "db_monitoring_interval" {
   default = 60
 }
 
-variable "auto_minor_version_upgrade" {
+variable "db_auto_minor_version_upgrade" {
   default = "true"
 }
 
-# AutoScailing #
-variable "health_check_grace_period" {
-  default = 300
+variable "db_skip_final_snapshot" {
+  default = "true"
 }
 
-variable "desired_capacity" {
-  default = 1
+variable "db_apply_immediately" {
+  default = "true"
 }
 
-variable "min_size" {
-  default = 1
+# ElastiCache #
+variable "cache_multi_az_enabled" {
+  default = "true"
 }
 
-variable "max_size" {
+variable "cache_automatic_failover_enabled" {
+  default = "true"
+}
+
+variable "cache_node_type" {
+  default = "cache.m6g.large"
+}
+variable "num_node_groups" {
   default = 2
 }
 
-variable "protect_from_scale_in" {
-  default = "false"
+variable "replicas_per_node_group" {
+  default = 1
 }
 
-variable "target_value" {
-  default = 50
+variable "cache_snapshot_retention_limit" {
+  default = 7
+}
+
+variable "cache_snapshot_window" {
+  default = "15:00-16:00"
+}
+
+variable "cache_maintenance_window" {
+  default = "Sat:16:00-Sat:17:00"
+}
+
+variable "cache_auto_minor_version_upgrade" {
+  default = "true"
+}
+
+variable "cache_apply_immediately" {
+  default = "true"
 }

@@ -67,12 +67,12 @@ resource "aws_instance" "tf_instance_1a" {
     delete_on_termination = var.ebs_delete_on_termination
     encrypted             = var.ebs_encrypted
     tags = {
-      Name = "${var.project}-${var.environment}-web-1a-ebs"
+      Name = "${var.project}-${var.environment}-ebs-web-1a"
     }
   }
 
   tags = {
-    Name = "${var.project}-${var.environment}-web-1a"
+    Name = "${var.project}-${var.environment}-ec2-web-1a"
   }
 
   depends_on = [
@@ -101,12 +101,12 @@ resource "aws_instance" "tf_instance_1c" {
     delete_on_termination = var.ebs_delete_on_termination
     encrypted             = var.ebs_encrypted
     tags = {
-      Name = "${var.project}-${var.environment}-web-1c-ebs"
+      Name = "${var.project}-${var.environment}-ebs-web-1c"
     }
   }
 
   tags = {
-    Name = "${var.project}-${var.environment}-web-1c"
+    Name = "${var.project}-${var.environment}-ec2-web-1c"
   }
 
   depends_on = [

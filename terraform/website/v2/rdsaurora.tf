@@ -4,32 +4,32 @@
 #
 # ====================
 resource "aws_rds_cluster" "tf_rds_cluster" {
-  engine                          = "aurora-mysql"
-  engine_version                  = "8.0.mysql_aurora.3.01.0"
+  engine         = "aurora-mysql"
+  engine_version = "8.0.mysql_aurora.3.01.0"
 
-  cluster_identifier              = "${var.project}-${var.environment}-rds-cluster"
+  cluster_identifier = "${var.project}-${var.environment}-rds-cluster"
 
-  db_subnet_group_name            = aws_db_subnet_group.tf_db_subnet_group.name
-  vpc_security_group_ids          = [aws_security_group.tf_sg_rds.id]
-  port                            = 3306
+  db_subnet_group_name   = aws_db_subnet_group.tf_db_subnet_group.name
+  vpc_security_group_ids = [aws_security_group.tf_sg_rds.id]
+  port                   = 3306
 
-  db_cluster_parameter_group_name = aws_db_parameter_group.tf_db_parametergroup.name
+  db_cluster_parameter_group_name = aws_rds_cluster_parameter_group.tf_rds_cluster_parameter_group.name
 
-  master_username                 = var.db_root_name
-  master_password                 = var.db_root_pass
+  master_username = var.db_root_name
+  master_password = var.db_root_pass
 
-  storage_encrypted               = var.storage_encrypted
+  storage_encrypted = var.db_storage_encrypted
 
   enabled_cloudwatch_logs_exports = ["error", "slowquery", "audit", "general"]
 
-  backup_retention_period         = var.backup_retention_period
-  preferred_backup_window         = var.backup_window
-  preferred_maintenance_window    = var.maintenance_window
+  backup_retention_period      = var.db_backup_retention_period
+  preferred_backup_window      = var.db_backup_window
+  preferred_maintenance_window = var.db_maintenance_window
 
-  deletion_protection             = var.deletion_protection
+  deletion_protection = var.db_deletion_protection
 
-  skip_final_snapshot = var.skip_final_snapshot
-  apply_immediately   = var.apply_immediately
+  skip_final_snapshot = var.db_skip_final_snapshot
+  apply_immediately   = var.db_apply_immediately
 
   tags = {
     Name = "${var.project}-${var.environment}-rds-cluster"
@@ -42,24 +42,26 @@ resource "aws_rds_cluster" "tf_rds_cluster" {
 #
 # ====================
 resource "aws_rds_cluster_instance" "tf_rds_cluster_instance" {
-  engine                                = aws_rds_cluster.tf_rds_cluster.engine
-  engine_version                        = aws_rds_cluster.tf_rds_cluster.engine_version
+  engine         = aws_rds_cluster.tf_rds_cluster.engine
+  engine_version = aws_rds_cluster.tf_rds_cluster.engine_version
 
-  cluster_identifier                    = aws_rds_cluster.tf_rds_cluster.id
-  identifier                            = "${var.project}-${var.environment}-rds-instance-1a"
+  cluster_identifier = aws_rds_cluster.tf_rds_cluster.id
+  identifier         = "${var.project}-${var.environment}-rds-instance-1a"
 
-  count                                 = 1
-  instance_class                        = var.instance_class
-  availability_zone                     = var.availability_zone_1
+  db_parameter_group_name = aws_db_parameter_group.tf_db_parameter_group.name
 
-  performance_insights_enabled          = var.performance_insights_enabled
-  performance_insights_retention_period = var.performance_insights_retention_period
-  monitoring_interval                   = var.monitoring_interval
+  count             = var.db_instance_count
+  instance_class    = var.db_instance_class
+  availability_zone = var.availability_zone_1
+
+  performance_insights_enabled          = var.db_performance_insights_enabled
+  performance_insights_retention_period = var.db_performance_insights_retention_period
+  monitoring_interval                   = var.db_monitoring_interval
   monitoring_role_arn                   = aws_iam_role.tf_iam_role_rds.arn
 
-  auto_minor_version_upgrade            = var.auto_minor_version_upgrade
+  auto_minor_version_upgrade = var.db_auto_minor_version_upgrade
 
-  apply_immediately = var.apply_immediately
+  apply_immediately = var.db_apply_immediately
 
   tags = {
     Name = "${var.project}-${var.environment}-rds-instance-1a"
@@ -73,7 +75,7 @@ resource "aws_rds_cluster_instance" "tf_rds_cluster_instance" {
 #
 # ====================
 resource "aws_db_subnet_group" "tf_db_subnet_group" {
-  name = "${var.project}-${var.environment}-rdb-subnet-group"
+  name = "${var.project}-${var.environment}-db-subnet-group"
   subnet_ids = [
     aws_subnet.tf_subnet_5.id,
     aws_subnet.tf_subnet_6.id
@@ -85,7 +87,12 @@ resource "aws_db_subnet_group" "tf_db_subnet_group" {
 # RDS Parameter Group
 #
 # ====================
-resource "aws_db_parameter_group" "tf_db_parametergroup" {
+resource "aws_rds_cluster_parameter_group" "tf_rds_cluster_parameter_group" {
+  name   = "${var.project}-${var.environment}-db-cluster-parametergroup"
+  family = "aurora-mysql8.0"
+}
+
+resource "aws_db_parameter_group" "tf_db_parameter_group" {
   name   = "${var.project}-${var.environment}-db-parametergroup"
-  family = "mysql8.0"
+  family = "aurora-mysql8.0"
 }

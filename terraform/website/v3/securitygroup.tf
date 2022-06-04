@@ -66,38 +66,6 @@ resource "aws_security_group_rule" "tf_out_all_ec2" {
   cidr_blocks       = ["0.0.0.0/0"]
 }
 
-# EFS用セキュリティグループ
-resource "aws_security_group" "tf_sg_efs" {
-  name   = "${var.project}-${var.environment}-efs-sg"
-  vpc_id = aws_vpc.tf_vpc.id
-
-  tags = {
-    Name = "${var.project}-${var.environment}-efs-sg"
-  }
-
-  depends_on = [aws_security_group.tf_sg_ec2]
-}
-
-# インバウンドルール(efs接続用)
-resource "aws_security_group_rule" "tf_in_efs" {
-  security_group_id        = aws_security_group.tf_sg_efs.id
-  type                     = "ingress"
-  protocol                 = "tcp"
-  from_port                = 2049
-  to_port                  = 2049
-  source_security_group_id = aws_security_group.tf_sg_ec2.id
-}
-
-# アウトバウンドルール(全開放)
-resource "aws_security_group_rule" "tf_out_all_efs" {
-  security_group_id = aws_security_group.tf_sg_efs.id
-  type              = "egress"
-  protocol          = "-1"
-  from_port         = 0
-  to_port           = 0
-  cidr_blocks       = ["0.0.0.0/0"]
-}
-
 # RDS用セキュリティグループ
 resource "aws_security_group" "tf_sg_rds" {
   name   = "${var.project}-${var.environment}-rds-sg"
@@ -123,6 +91,38 @@ resource "aws_security_group_rule" "tf_in_mysql_rds" {
 # アウトバウンドルール(全開放)
 resource "aws_security_group_rule" "tf_out_all_rds" {
   security_group_id = aws_security_group.tf_sg_rds.id
+  type              = "egress"
+  protocol          = "-1"
+  from_port         = 0
+  to_port           = 0
+  cidr_blocks       = ["0.0.0.0/0"]
+}
+
+# ElastiCache用セキュリティグループ
+resource "aws_security_group" "tf_sg_elasticache" {
+  name   = "${var.project}-${var.environment}-elasticache-sg"
+  vpc_id = aws_vpc.tf_vpc.id
+
+  tags = {
+    Name = "${var.project}-${var.environment}-elasticache-sg"
+  }
+
+  depends_on = [aws_security_group.tf_sg_ec2]
+}
+
+# インバウンドルール(redis接続用)
+resource "aws_security_group_rule" "tf_in_redis_elasticache" {
+  security_group_id        = aws_security_group.tf_sg_elasticache.id
+  type                     = "ingress"
+  protocol                 = "tcp"
+  from_port                = 6379
+  to_port                  = 6379
+  source_security_group_id = aws_security_group.tf_sg_ec2.id
+}
+
+# アウトバウンドルール(全開放)
+resource "aws_security_group_rule" "tf_out_all_elasticache" {
+  security_group_id = aws_security_group.tf_sg_elasticache.id
   type              = "egress"
   protocol          = "-1"
   from_port         = 0

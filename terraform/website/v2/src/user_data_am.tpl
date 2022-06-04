@@ -18,6 +18,14 @@ yum install -y httpd
 #MySQL(クライアント)導入
 yum install -y mysql
 
+#Redis(クライアント)導入
+amazon-linux-extras install epel -y
+yum install gcc jemalloc-devel openssl-devel tcl tcl-devel -y
+wget http://download.redis.io/redis-stable.tar.gz
+tar xvzf redis-stable.tar.gz
+cd redis-stable
+make
+
 #Apache起動
 systemctl start httpd
 
