@@ -56,8 +56,19 @@ resource "aws_instance" "tf_instance_1a" {
   disable_api_termination     = var.disable_api_termination
   ebs_optimized               = var.ebs_optimized
 
-  user_data = file(var.user_data_file)
-
+  user_data = templatefile(
+    var.user_data_file,
+    {
+      EFS_ID       = aws_efs_file_system.tf_efs_file_system.id
+      DB_HOST      = aws_rds_cluster.tf_rds_cluster.endpoint
+      DB_NAME      = var.db_name
+      DB_ROOT_NAME = var.db_root_name
+      DB_ROOT_PASS = var.db_root_pass
+      DB_USER_NAME = var.db_user_name
+      DB_USER_PASS = var.db_user_pass
+      AZ_1         = var.availability_zone_1
+    }
+  )
   ebs_block_device {
     device_name           = var.ebs_device_name
     volume_size           = var.ebs_volume_size
@@ -76,7 +87,7 @@ resource "aws_instance" "tf_instance_1a" {
   }
 
   depends_on = [
-    aws_nat_gateway.tf_ngw_1a, aws_db_instance.tf_db_instance
+    aws_nat_gateway.tf_ngw_1a, aws_rds_cluster_instance.tf_rds_cluster_instance
   ]
 }
 
@@ -90,7 +101,19 @@ resource "aws_instance" "tf_instance_1c" {
   disable_api_termination     = var.disable_api_termination
   ebs_optimized               = var.ebs_optimized
 
-  user_data = file(var.user_data_file)
+  user_data = templatefile(
+    var.user_data_file,
+    {
+      EFS_ID       = aws_efs_file_system.tf_efs_file_system.id
+      DB_HOST      = aws_rds_cluster.tf_rds_cluster.endpoint
+      DB_NAME      = var.db_name
+      DB_ROOT_NAME = var.db_root_name
+      DB_ROOT_PASS = var.db_root_pass
+      DB_USER_NAME = var.db_user_name
+      DB_USER_PASS = var.db_user_pass
+      AZ_1         = var.availability_zone_1
+    }
+  )
 
   ebs_block_device {
     device_name           = var.ebs_device_name
@@ -110,6 +133,6 @@ resource "aws_instance" "tf_instance_1c" {
   }
 
   depends_on = [
-    aws_nat_gateway.tf_ngw_1c, aws_db_instance.tf_db_instance
+    aws_nat_gateway.tf_ngw_1c, aws_rds_cluster_instance.tf_rds_cluster_instance
   ]
 }

@@ -16,10 +16,10 @@ output "alb_dns_name" {
   value = aws_lb.tf_alb.dns_name
 }
 
-output "url_for_wordpress_install" {
-  value = "http://${aws_lb.tf_alb.dns_name}/blog/wp-admin/install.php"
+output "url_for_access" {
+  value = "http://${aws_lb.tf_alb.dns_name}"
 }
 
 output "rds_endpoint" {
-  value = aws_rds_cluster.tf_rds_cluster.endpoint
+  value = aws_db_instance.tf_db_instance.address
 }

@@ -75,6 +75,10 @@ variable "expiration_days" {
   default = 400
 }
 
+variable "bucket_policy_document_file" {
+  default = "./src/bucket_policy_document.json"
+}
+
 variable "file_format" {
   default = "parquet"
 }
@@ -245,15 +249,15 @@ variable "health_check_grace_period" {
 }
 
 variable "desired_capacity" {
-  default = 1
+  default = 2
 }
 
 variable "min_size" {
-  default = 1
+  default = 2
 }
 
 variable "max_size" {
-  default = 2
+  default = 4
 }
 
 variable "protect_from_scale_in" {
@@ -262,4 +266,98 @@ variable "protect_from_scale_in" {
 
 variable "target_value" {
   default = 50
+}
+
+# Route53 #
+variable "naked_domain" {}
+
+variable "sub_domain" {}
+
+# WAF #
+variable "cloudwatch_metrics_enabled" {
+  default = "true"
+}
+
+variable "sampled_requests_enabled" {
+  default = "true"
+}
+
+# CloudFront #
+variable "default_origin_protocol_policy" {
+  default = "https-only"
+}
+
+variable "default_origin_ssl_protocols" {
+  default = ["TLSv1.1", "TLSv1.2"]
+}
+
+variable "custom_header_name" {}
+
+variable "custom_header_value" {}
+
+variable "default_cb_allowed_methods" {
+  default = ["GET", "HEAD"]
+}
+
+variable "default_cb_cached_methods" {
+  default = ["GET", "HEAD"]
+}
+variable "default_cb_query_string" {
+  default = "true"
+}
+
+variable "default_cb_cookies_forward" {
+  default = "all"
+}
+
+variable "default_cb_viewer_protocol_policy" {
+  default = "redirect-to-https"
+}
+
+variable "default_cb_min_ttl" {
+  default = 0
+}
+
+variable "default_cb_default_ttl" {
+  default = 0
+}
+
+variable "default_cb_max_ttl" {
+  default = 0
+}
+
+variable "default_cb_compress" {
+  default = "false"
+}
+
+variable "cf_geo_restriction_type" {
+  default = "none"
+}
+
+variable "cf_enabled" {
+  default = "true"
+}
+
+variable "cf_is_ipv6_enabled" {
+  default = "false"
+}
+
+variable "cf_price_class" {
+  default = "PriceClass_All"
+}
+
+variable "cf_log_include_cookies" {
+  default = "false"
+}
+
+variable "cf_log_prefix" {
+  default = "cf-log"
+}
+
+variable "cf_minimum_protocol_version" {
+  default = "TLSv1.2_2019"
+}
+
+variable "cf_ssl_support_method" {
+  default = "sni-only"
 }

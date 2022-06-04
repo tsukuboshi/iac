@@ -17,13 +17,11 @@ resource "aws_lb" "tf_alb" {
     aws_security_group.tf_sg_alb.id
   ]
 
-  access_logs {
-    bucket  = aws_s3_bucket.tf_bucket_alb_log.bucket
-    prefix  = var.alb_log_prefix
-    enabled = true
-  }
-
   enable_deletion_protection = var.enable_deletion_protection
+
+  tags = {
+    Name = "${var.project}-${var.environment}-web-alb"
+  }
 }
 
 # ====================
@@ -32,42 +30,18 @@ resource "aws_lb" "tf_alb" {
 #
 # ====================
 
-resource "aws_lb_listener" "tf_alb_lsnr_https" {
+resource "aws_lb_listener" "alb_listener_http" {
   load_balancer_arn = aws_lb.tf_alb.arn
-  port              = 443
-  protocol          = "HTTPS"
-  ssl_policy        = "ELBSecurityPolicy-2016-08"
-  certificate_arn   = aws_acm_certificate.tf_acm_alb_cert.arn
+  port              = "80"
+  protocol          = "HTTP"
 
   default_action {
-    type = "fixed-response"
-
-    fixed_response {
-      content_type = "text/plain"
-      message_body = "Not Found"
-      status_code  = "404"
-    }
-  }
-
-  depends_on = [
-    aws_acm_certificate_validation.tf_acm_alb_cert_valid
-  ]
-}
-
-resource "aws_lb_listener_rule" "tf_alb_listener_rule_access" {
-  listener_arn = aws_lb_listener.tf_alb_lsnr_https.arn
-  priority     = 100
-
-  action {
     type             = "forward"
     target_group_arn = aws_lb_target_group.tf_alb_tg.arn
   }
 
-  condition {
-    http_header {
-      http_header_name = var.custom_header_name
-      values           = [var.custom_header_value]
-    }
+  tags = {
+    Name = "${var.project}-${var.environment}-alb-lsnr"
   }
 }
 
@@ -78,7 +52,7 @@ resource "aws_lb_listener_rule" "tf_alb_listener_rule_access" {
 # ====================
 
 resource "aws_lb_target_group" "tf_alb_tg" {
-  name                          = "${var.project}-${var.environment}-web-tg-${substr(uuid(), 0, 6)}"
+  name                          = "${var.project}-${var.environment}-web-tg"
   target_type                   = "instance"
   port                          = 80
   protocol                      = "HTTP"
@@ -98,9 +72,8 @@ resource "aws_lb_target_group" "tf_alb_tg" {
     matcher             = var.matcher
   }
 
-  lifecycle {
-    create_before_destroy = true
-    ignore_changes        = [name]
+  tags = {
+    Name = "${var.project}-${var.environment}-web-tg"
   }
 }
 

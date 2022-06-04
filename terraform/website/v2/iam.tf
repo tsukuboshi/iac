@@ -19,6 +19,10 @@ data "aws_iam_policy_document" "tf_policy_document_ssm" {
 resource "aws_iam_role" "tf_iam_role_ssm" {
   name               = "${var.project}-${var.environment}-ec2-web-role"
   assume_role_policy = data.aws_iam_policy_document.tf_policy_document_ssm.json
+
+  tags = {
+    Name = "${var.project}-${var.environment}-ec2-web-role"
+  }
 }
 
 data "aws_iam_policy" "tf_iam_policy_ssm" {
@@ -33,6 +37,10 @@ resource "aws_iam_role_policy_attachment" "tf_iam_rolpol_ssm" {
 resource "aws_iam_instance_profile" "tf_instance_profile_ssm" {
   name = "${var.project}-${var.environment}-ec2-web-instance-profile"
   role = aws_iam_role.tf_iam_role_ssm.name
+
+  tags = {
+    Name = "${var.project}-${var.environment}-ec2-web-instance-profile"
+  }
 }
 
 #RDS拡張モニタリング用ロール
@@ -50,6 +58,10 @@ data "aws_iam_policy_document" "tf_policy_document_rds" {
 resource "aws_iam_role" "tf_iam_role_rds" {
   name               = "${var.project}-${var.environment}-rds-role"
   assume_role_policy = data.aws_iam_policy_document.tf_policy_document_rds.json
+
+  tags = {
+    Name = "${var.project}-${var.environment}-rds-role"
+  }
 }
 
 data "aws_iam_policy" "tf_iam_policy_rds" {

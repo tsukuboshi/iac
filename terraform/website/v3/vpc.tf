@@ -354,3 +354,30 @@ resource "aws_network_acl_association" "tf_naclsub_3_2" {
   network_acl_id = aws_network_acl.tf_nacl_3.id
   subnet_id      = aws_subnet.tf_subnet_6.id
 }
+
+# ====================
+#
+# VPC Flow Log
+#
+# ====================
+resource "aws_flow_log" "tf_flow_log" {
+  vpc_id                   = aws_vpc.tf_vpc.id
+  log_destination          = aws_s3_bucket.tf_bucket_vpc_log.arn
+  traffic_type             = var.traffic_type
+  max_aggregation_interval = var.max_aggregation_interval
+  log_destination_type     = "s3"
+
+  destination_options {
+    file_format                = var.file_format
+    hive_compatible_partitions = var.hive_compatible_partitions
+    per_hour_partition         = var.per_hour_partition
+  }
+
+  tags = {
+    Name = "${var.project}-${var.environment}-vpc-flow-log"
+  }
+
+  depends_on = [
+    aws_s3_bucket.tf_bucket_vpc_log
+  ]
+}

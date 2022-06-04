@@ -12,14 +12,14 @@ output "instance_1c_id" {
   value = aws_instance.tf_instance_1c.id
 }
 
-output "url_for_static_content" {
-  value = "https://${aws_route53_record.tf_route53_record_view_cf_access.name}/static/index.html"
+output "alb_dns_name" {
+  value = aws_lb.tf_alb.dns_name
 }
 
-output "url_for_view" {
-  value = "https://${aws_route53_record.tf_route53_record_view_cf_access.name}"
+output "url_for_wordpress_install" {
+  value = "http://${aws_lb.tf_alb.dns_name}/blog/wp-admin/install.php"
 }
 
-# output "rds_endpoint" {
-#   value = aws_rds_cluster.tf_rds_cluster.endpoint
-# }
+output "rds_endpoint" {
+  value = aws_rds_cluster.tf_rds_cluster.endpoint
+}

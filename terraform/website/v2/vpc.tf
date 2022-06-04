@@ -27,7 +27,7 @@ resource "aws_subnet" "tf_subnet_1" {
   availability_zone       = var.availability_zone_1
 
   tags = {
-    Name = "${var.project}-${var.environment}-frontend-subnet-1a"
+    Name = "${var.project}-${var.environment}-public-subnet-1a"
   }
 }
 
@@ -38,7 +38,7 @@ resource "aws_subnet" "tf_subnet_2" {
   availability_zone       = var.availability_zone_2
 
   tags = {
-    Name = "${var.project}-${var.environment}-frontend-subnet-1c"
+    Name = "${var.project}-${var.environment}-public-subnet-1c"
   }
 }
 
@@ -50,7 +50,7 @@ resource "aws_subnet" "tf_subnet_3" {
   availability_zone       = var.availability_zone_1
 
   tags = {
-    Name = "${var.project}-${var.environment}-application-subnet-1a"
+    Name = "${var.project}-${var.environment}-private-subnet-1a"
   }
 }
 
@@ -61,7 +61,7 @@ resource "aws_subnet" "tf_subnet_4" {
   availability_zone       = var.availability_zone_2
 
   tags = {
-    Name = "${var.project}-${var.environment}-application-subnet-1c"
+    Name = "${var.project}-${var.environment}-private-subnet-1c"
   }
 }
 
@@ -73,7 +73,7 @@ resource "aws_subnet" "tf_subnet_5" {
   availability_zone       = var.availability_zone_1
 
   tags = {
-    Name = "${var.project}-${var.environment}-datastore-subnet-1a"
+    Name = "${var.project}-${var.environment}-isolated-subnet-1a"
   }
 }
 
@@ -84,7 +84,7 @@ resource "aws_subnet" "tf_subnet_6" {
   availability_zone       = var.availability_zone_2
 
   tags = {
-    Name = "${var.project}-${var.environment}-datastore-subnet-1c"
+    Name = "${var.project}-${var.environment}-isolated-subnet-1c"
   }
 }
 
@@ -163,7 +163,7 @@ resource "aws_nat_gateway" "tf_ngw_1c" {
 resource "aws_route_table" "tf_rtb_1" {
   vpc_id = aws_vpc.tf_vpc.id
   tags = {
-    Name = "${var.project}-${var.environment}-frontend-rtb"
+    Name = "${var.project}-${var.environment}-public-rtb"
   }
 }
 
@@ -187,7 +187,7 @@ resource "aws_route_table_association" "tf_rtbsub_1_2" {
 resource "aws_route_table" "tf_rtb_2" {
   vpc_id = aws_vpc.tf_vpc.id
   tags = {
-    Name = "${var.project}-${var.environment}-application-1a-rtb"
+    Name = "${var.project}-${var.environment}-private-1a-rtb"
   }
 }
 
@@ -205,7 +205,7 @@ resource "aws_route_table_association" "tf_rtbsub_2_1" {
 resource "aws_route_table" "tf_rtb_3" {
   vpc_id = aws_vpc.tf_vpc.id
   tags = {
-    Name = "${var.project}-${var.environment}-application-1c-rtb"
+    Name = "${var.project}-${var.environment}-private-1c-rtb"
   }
 }
 
@@ -224,7 +224,7 @@ resource "aws_route_table_association" "tf_subrtb_3_1" {
 resource "aws_route_table" "tf_rtb_4" {
   vpc_id = aws_vpc.tf_vpc.id
   tags = {
-    Name = "${var.project}-${var.environment}-datastore-rtb"
+    Name = "${var.project}-${var.environment}-isolated-rtb"
   }
 }
 
@@ -267,7 +267,7 @@ resource "aws_network_acl" "tf_nacl_1" {
   }
 
   tags = {
-    Name = "${var.project}-${var.environment}-frontend-nacl"
+    Name = "${var.project}-${var.environment}-public-nacl"
   }
 }
 
@@ -304,7 +304,7 @@ resource "aws_network_acl" "tf_nacl_2" {
   }
 
   tags = {
-    Name = "${var.project}-${var.environment}-application-nacl"
+    Name = "${var.project}-${var.environment}-private-nacl"
   }
 }
 
@@ -341,7 +341,7 @@ resource "aws_network_acl" "tf_nacl_3" {
   }
 
   tags = {
-    Name = "${var.project}-${var.environment}-datastore-nacl"
+    Name = "${var.project}-${var.environment}-isolated-nacl"
   }
 }
 
@@ -353,31 +353,4 @@ resource "aws_network_acl_association" "tf_naclsub_3_1" {
 resource "aws_network_acl_association" "tf_naclsub_3_2" {
   network_acl_id = aws_network_acl.tf_nacl_3.id
   subnet_id      = aws_subnet.tf_subnet_6.id
-}
-
-# ====================
-#
-# VPC Flow Log
-#
-# ====================
-resource "aws_flow_log" "tf_flow_log" {
-  vpc_id                   = aws_vpc.tf_vpc.id
-  log_destination          = aws_s3_bucket.tf_bucket_vpc_log.arn
-  traffic_type             = var.traffic_type
-  max_aggregation_interval = var.max_aggregation_interval
-  log_destination_type     = "s3"
-
-  destination_options {
-    file_format                = var.file_format
-    hive_compatible_partitions = var.hive_compatible_partitions
-    per_hour_partition         = var.per_hour_partition
-  }
-
-  tags = {
-    Name = "${var.project}-${var.environment}-vpc-flow-log"
-  }
-
-  depends_on = [
-    aws_s3_bucket.tf_bucket_vpc_log
-  ]
 }

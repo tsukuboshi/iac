@@ -129,7 +129,7 @@ variable "ebs_encrypted" {
 }
 
 variable "user_data_file" {
-  default = "./src/user_data_cms.tpl"
+  default = "./src/user_data_am.tpl"
 }
 
 # ALB #
@@ -191,6 +191,23 @@ variable "db_user_name" {
 
 variable "db_user_pass" {}
 
+variable "multi_az" {
+  default = false #本番環境ではtrueに変更
+}
+
+variable "storage_type" {
+  default = "gp2"
+}
+
+variable "allocated_storage" {
+  default = 20
+}
+
+variable "max_allocated_storage" {
+  default = 50
+}
+
+
 variable "storage_encrypted" {
   default = "false"
 }
@@ -220,7 +237,7 @@ variable "apply_immediately" {
 }
 
 variable "instance_class" {
-  default = "db.t4g.medium"
+  default = "db.m5.large"
 }
 
 variable "performance_insights_enabled" {
