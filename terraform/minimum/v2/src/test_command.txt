@@ -1,3 +1,0 @@
-#インスタンス接続
-INSTANCE_ID="$(terraform output -json | jq -r .instance_id.value)"
-ssh -i ~/.ssh/minimum_tf.pem ec2-user@"${INSTANCE_ID}"
