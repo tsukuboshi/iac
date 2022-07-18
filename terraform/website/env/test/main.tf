@@ -556,6 +556,23 @@ module "private_1c_ec2" {
   public_ngw_id   = module.public_1c_natgateway.ngw_id
 }
 
+module "iam_backup_role" {
+  source      = "../../modules/iambackuprole"
+  system      = var.system
+  project     = var.project
+  environment = var.environment
+}
+
+module "ec2_backup" {
+  source          = "../../modules/ec2backup"
+  system          = var.system
+  project         = var.project
+  environment     = var.environment
+  backup_role_arn = module.iam_backup_role.backup_role_arn
+  instance_1a_arn = module.private_1a_ec2.instance_arn
+  instance_1c_arn = module.private_1c_ec2.instance_arn
+}
+
 # module "autoscailing" {
 #   source                      = "../../modules/autoscailing"
 #   system                      = var.system
