@@ -42,11 +42,11 @@ variable "internal" {
 }
 
 variable "naked_domain" {
-  default = "jagabard.ml"
+  # default = "example.com"
 }
 
 variable "sub_domain" {
-  default = "ex"
+  default = "cm"
 }
 
 # VPC #
@@ -207,7 +207,7 @@ variable "db_root_name" {
 }
 
 variable "db_root_pass" {
-  default = "password"
+  # default = "password"
 }
 
 variable "db_storage_type" {
