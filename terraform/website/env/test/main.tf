@@ -508,6 +508,15 @@ module "iam_ec2_role" {
   iam_role_policy_arn            = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
 }
 
+module "instance_profile" {
+  source       = "../../modules/instanceprofile"
+  system       = var.system
+  project      = var.project
+  environment  = var.environment
+  resourcetype = "ec2"
+  ec2_role_arn = module.iam_ec2_role.iam_role_arn
+}
+
 # module "keypair" {
 #   source       = "../../modules/keypair"
 #   system       = var.system
@@ -529,7 +538,7 @@ module "private_1a_ec2" {
   security_group_id           = module.ec2_sg.security_group_id
   ami_image_id                = module.ami.ami_image_id
   associate_public_ip_address = false
-  ec2_role_arn                = module.iam_ec2_role.iam_role_arn
+  instance_profile            = module.instance_profile.instance_profile
   # key_pair_id                 = module.keypair.key_pair_id
   user_data_file  = var.user_data_file
   ebs_volume_size = var.ebs_volume_size
@@ -550,7 +559,7 @@ module "private_1c_ec2" {
   security_group_id           = module.ec2_sg.security_group_id
   ami_image_id                = module.ami.ami_image_id
   associate_public_ip_address = false
-  ec2_role_arn                = module.iam_ec2_role.iam_role_arn
+  instance_profile            = module.instance_profile.instance_profile
   # key_pair_id                 = module.keypair.key_pair_id
   user_data_file  = var.user_data_file
   ebs_volume_size = var.ebs_volume_size

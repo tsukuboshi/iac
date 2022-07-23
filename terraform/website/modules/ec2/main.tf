@@ -1,20 +1,5 @@
 # ====================
 #
-# Instance Profile
-#
-# ====================
-
-resource "aws_iam_instance_profile" "tf_instance_profile" {
-  name = "${var.system}-${var.project}-${var.environment}-${var.resourcetype}-instance-profile"
-  role = var.ec2_role_arn
-
-  tags = {
-    Name = "${var.system}-${var.project}-${var.environment}-${var.resourcetype}-instance-profile"
-  }
-}
-
-# ====================
-#
 # EC2 Instance
 #
 # ====================
@@ -25,7 +10,7 @@ resource "aws_instance" "tf_instance" {
   associate_public_ip_address = var.associate_public_ip_address
   vpc_security_group_ids      = [var.security_group_id]
   ami                         = var.ami_image_id
-  iam_instance_profile        = aws_iam_instance_profile.tf_instance_profile.name
+  iam_instance_profile        = var.instance_profile
   disable_api_termination     = var.internal == true ? false : true
   ebs_optimized               = true
 
