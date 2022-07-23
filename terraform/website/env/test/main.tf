@@ -498,11 +498,14 @@ module "ami" {
   source = "../../modules/ami"
 }
 
-module "iam_instance_profile" {
-  source      = "../../modules/iaminstanceprofile"
-  system      = var.system
-  project     = var.project
-  environment = var.environment
+module "iam_ec2_role" {
+  source                         = "../../modules/iamrole"
+  system                         = var.system
+  project                        = var.project
+  environment                    = var.environment
+  resourcetype                   = "ec2"
+  iam_role_principal_identifiers = "ec2.amazonaws.com"
+  iam_role_policy_arn            = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
 }
 
 # module "keypair" {
@@ -526,7 +529,7 @@ module "private_1a_ec2" {
   security_group_id           = module.ec2_sg.security_group_id
   ami_image_id                = module.ami.ami_image_id
   associate_public_ip_address = false
-  instance_profile            = module.iam_instance_profile.instance_profile
+  ec2_role_arn                = module.iam_ec2_role.iam_role_arn
   # key_pair_id                 = module.keypair.key_pair_id
   user_data_file  = var.user_data_file
   ebs_volume_size = var.ebs_volume_size
@@ -547,7 +550,7 @@ module "private_1c_ec2" {
   security_group_id           = module.ec2_sg.security_group_id
   ami_image_id                = module.ami.ami_image_id
   associate_public_ip_address = false
-  instance_profile            = module.iam_instance_profile.instance_profile
+  ec2_role_arn                = module.iam_ec2_role.iam_role_arn
   # key_pair_id                 = module.keypair.key_pair_id
   user_data_file  = var.user_data_file
   ebs_volume_size = var.ebs_volume_size
@@ -557,10 +560,13 @@ module "private_1c_ec2" {
 }
 
 module "iam_backup_role" {
-  source      = "../../modules/iambackuprole"
-  system      = var.system
-  project     = var.project
-  environment = var.environment
+  source                         = "../../modules/iamrole"
+  system                         = var.system
+  project                        = var.project
+  environment                    = var.environment
+  resourcetype                   = "backup"
+  iam_role_principal_identifiers = "backup.amazonaws.com"
+  iam_role_policy_arn            = "arn:aws:iam::aws:policy/service-role/AWSBackupServiceRolePolicyForBackup"
 }
 
 module "ec2_backup" {
@@ -568,7 +574,7 @@ module "ec2_backup" {
   system          = var.system
   project         = var.project
   environment     = var.environment
-  backup_role_arn = module.iam_backup_role.backup_role_arn
+  backup_role_arn = module.iam_backup_role.iam_role_arn
   instance_1a_arn = module.private_1a_ec2.instance_arn
   instance_1c_arn = module.private_1c_ec2.instance_arn
 }
@@ -601,10 +607,13 @@ module "ec2_backup" {
 # }
 
 module "iam_rds_role" {
-  source      = "../../modules/iamrdsrole"
-  system      = var.system
-  project     = var.project
-  environment = var.environment
+  source                         = "../../modules/iamrole"
+  system                         = var.system
+  project                        = var.project
+  environment                    = var.environment
+  resourcetype                   = "rds"
+  iam_role_principal_identifiers = "monitoring.rds.amazonaws.com"
+  iam_role_policy_arn            = "arn:aws:iam::aws:policy/service-role/AmazonRDSEnhancedMonitoringRole"
 }
 
 # module "rds" {
@@ -629,7 +638,7 @@ module "iam_rds_role" {
 #   db_maintenance_window                    = var.db_maintenance_window
 #   db_performance_insights_enabled          = var.db_performance_insights_enabled
 #   db_performance_insights_retention_period = var.db_performance_insights_retention_period
-#   db_monitoring_role_arn                   = module.iam_rds_role.rds_monitoring_role_arn
+#   db_monitoring_role_arn                   = module.iam_rds_role.iam_role_arn
 #   db_monitoring_interval                   = var.db_monitoring_interval
 #   db_auto_minor_version_upgrade            = var.db_auto_minor_version_upgrade
 #   isolated_1a_subnet_id                    = module.isolated_1a_subnet.subnet_id
@@ -658,7 +667,7 @@ module "rdsaurora" {
   db_maintenance_window                    = var.db_maintenance_window
   db_performance_insights_enabled          = var.db_performance_insights_enabled
   db_performance_insights_retention_period = var.db_performance_insights_retention_period
-  db_monitoring_role_arn                   = module.iam_rds_role.rds_monitoring_role_arn
+  db_monitoring_role_arn                   = module.iam_rds_role.iam_role_arn
   db_monitoring_interval                   = var.db_monitoring_interval
   db_auto_minor_version_upgrade            = var.db_auto_minor_version_upgrade
   isolated_1a_subnet_id                    = module.isolated_1a_subnet.subnet_id

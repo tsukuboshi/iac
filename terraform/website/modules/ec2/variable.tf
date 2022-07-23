@@ -24,7 +24,7 @@ variable "security_group_id" {}
 
 variable "ami_image_id" {}
 
-variable "instance_profile" {}
+variable "ec2_role_arn" {}
 
 variable "key_pair_id" {
   default = null
