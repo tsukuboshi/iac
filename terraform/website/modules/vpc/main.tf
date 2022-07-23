@@ -15,6 +15,16 @@ resource "aws_vpc" "tf_vpc" {
   }
 }
 
+
+# ====================
+#
+# Default Security Group
+#
+# ====================
+resource "aws_default_security_group" "tf_default_security_group" {
+  vpc_id = aws_vpc.tf_vpc.id
+}
+
 # ====================
 #
 # VPC Flow Log
