@@ -49,6 +49,30 @@ variable "sub_domain" {
   default = "cm"
 }
 
+variable "service_rsrc_type_alb" {
+  default = "alb"
+}
+
+variable "service_rsrc_type_ec2" {
+  default = "ec2"
+}
+
+variable "service_rsrc_type_ecs" {
+  default = "ecs"
+}
+
+variable "service_rsrc_type_rds" {
+  default = "rds"
+}
+
+variable "service_rsrc_type_cache" {
+  default = "cache"
+}
+
+variable "service_rsrc_type_backup" {
+  default = "backup"
+}
+
 # VPC #
 variable "vpc_cidr_block" {
   default = "10.0.0.0/16"
@@ -99,27 +123,18 @@ variable "network_rsrc_type_isolated" {
   default = "isolated"
 }
 
-# Security Group #
-variable "sg_rsrc_type_alb" {
-  default = "alb"
-}
-
-variable "sg_rsrc_type_ec2" {
-  default = "ec2"
-}
-
-variable "sg_rsrc_type_rds" {
-  default = "rds"
-}
-
-variable "sg_rsrc_type_cache" {
-  default = "cache"
-}
-
 # ALB #
 
 variable "access_log_prefix" {
   default = "alb"
+}
+
+variable "alb_target_type_ec2" {
+  default = "instance"
+}
+
+variable "alb_target_type_ecs" {
+  default = "ip"
 }
 
 variable "alb_tg_rsrc_type_enduser" {
@@ -183,6 +198,15 @@ variable "asg_min_size" {
 
 variable "asg_max_size" {
   default = 4
+}
+
+# ECS #
+variable "container_definitions_httpd_file" {
+  default = "../../src/container_definitions_httpd.json"
+}
+
+variable "ecs_httpd_service_desired_count" {
+  default = 2
 }
 
 # RDS #

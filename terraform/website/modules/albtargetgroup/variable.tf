@@ -14,21 +14,7 @@ variable "resourcetype" {}
 
 variable "vpc_id" {}
 
-variable "has_instance_1a" {
-  default = false
-}
-
-variable "has_instance_1c" {
-  default = false
-}
-
-variable "instance_1a_id" {
-  default = null
-}
-
-variable "instance_1c_id" {
-  default = null
-}
+variable "alb_target_type" {}
 
 variable "alb_lsnr_https_arn" {}
 

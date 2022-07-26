@@ -1,0 +1,14 @@
+[
+  {
+    "name": "httpd-container",
+    "image": "public.ecr.aws/docker/library/httpd:latest",
+    "essential": true,
+    "memory": 128,
+    "portMappings": [
+      {
+        "protocol": "tcp",
+        "containerPort": 80
+      }
+    ]
+  }
+]

@@ -262,7 +262,7 @@ module "alb_sg" {
   system       = var.system
   project      = var.project
   environment  = var.environment
-  resourcetype = var.sg_rsrc_type_alb
+  resourcetype = var.service_rsrc_type_alb
   vpc_id       = module.vpc.vpc_id
 }
 
@@ -271,7 +271,7 @@ module "ec2_sg" {
   system       = var.system
   project      = var.project
   environment  = var.environment
-  resourcetype = var.sg_rsrc_type_ec2
+  resourcetype = var.service_rsrc_type_ec2
   vpc_id       = module.vpc.vpc_id
 }
 
@@ -280,7 +280,7 @@ module "rds_sg" {
   system       = var.system
   project      = var.project
   environment  = var.environment
-  resourcetype = var.sg_rsrc_type_rds
+  resourcetype = var.service_rsrc_type_rds
   vpc_id       = module.vpc.vpc_id
 }
 
@@ -289,7 +289,7 @@ module "cache_sg" {
   system       = var.system
   project      = var.project
   environment  = var.environment
-  resourcetype = var.sg_rsrc_type_cache
+  resourcetype = var.service_rsrc_type_cache
   vpc_id       = module.vpc.vpc_id
 }
 
@@ -357,19 +357,6 @@ module "ec2_sg_ingress_rule_http" {
 #   sg_rule_to_port                  = 22
 #   sg_rule_cidr_blocks              = ["xxx.xxx.xxx.xxx"]
 # }
-
-module "ec2_sg_egress_rule_all" {
-  source              = "../../modules/securitygrouprule"
-  system              = var.system
-  project             = var.project
-  environment         = var.environment
-  security_group_id   = module.ec2_sg.security_group_id
-  sg_rule_type        = "egress"
-  sg_rule_protocol    = -1
-  sg_rule_from_port   = 0
-  sg_rule_to_port     = 0
-  sg_rule_cidr_blocks = ["0.0.0.0/0"]
-}
 
 module "rds_sg_ingress_rule_mysql" {
   source                           = "../../modules/securitygrouprule"
@@ -466,10 +453,7 @@ module "public_alb_tg" {
   environment               = var.environment
   resourcetype              = var.alb_tg_rsrc_type_enduser
   vpc_id                    = module.vpc.vpc_id
-  has_instance_1a           = true
-  has_instance_1c           = true
-  instance_1a_id            = module.private_1a_ec2.instance_id
-  instance_1c_id            = module.private_1c_ec2.instance_id
+  alb_target_type           = var.alb_target_type_ecs
   alb_lsnr_https_arn        = module.public_alb.alb_lsnr_https_arn
   alb_lsnr_rule_priority    = 100
   has_host_header           = true
@@ -494,29 +478,6 @@ module "s3_alb_log_bucket_policy" {
   access_log_prefix      = var.access_log_prefix
 }
 
-module "ami" {
-  source = "../../modules/ami"
-}
-
-module "iam_ec2_role" {
-  source                         = "../../modules/iamrole"
-  system                         = var.system
-  project                        = var.project
-  environment                    = var.environment
-  resourcetype                   = "ec2"
-  iam_role_principal_identifiers = "ec2.amazonaws.com"
-  iam_role_policy_arn            = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
-}
-
-module "instance_profile" {
-  source       = "../../modules/instanceprofile"
-  system       = var.system
-  project      = var.project
-  environment  = var.environment
-  resourcetype = "ec2"
-  ec2_role_arn = module.iam_ec2_role.iam_role_arn
-}
-
 # module "keypair" {
 #   source       = "../../modules/keypair"
 #   system       = var.system
@@ -525,6 +486,34 @@ module "instance_profile" {
 #   has_key_pair = true
 #   public_key_file = ~/.ssh/xxx.pub
 # }
+
+module "ami" {
+  source = "../../modules/ami"
+}
+
+module "iam_ec2_policy" {
+  source                         = "../../modules/iammanagedpolicy"
+  iam_role_policy_arn            = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
+}
+
+module "iam_ec2_role" {
+  source                         = "../../modules/iamrole"
+  system                         = var.system
+  project                        = var.project
+  environment                    = var.environment
+  resourcetype                   = var.service_rsrc_type_ec2
+  iam_role_principal_identifiers = "ec2.amazonaws.com"
+  iam_policy_arn                 = module.iam_ec2_policy.iam_policy_arn
+}
+
+module "instance_profile" {
+  source       = "../../modules/instanceprofile"
+  system       = var.system
+  project      = var.project
+  environment  = var.environment
+  resourcetype = var.service_rsrc_type_ec2
+  ec2_role_arn = module.iam_ec2_role.iam_role_arn
+}
 
 module "private_1a_ec2" {
   source                      = "../../modules/ec2"
@@ -545,6 +534,12 @@ module "private_1a_ec2" {
   ebs_volume_type = var.ebs_volume_type
   ebs_encrypted   = var.ebs_encrypted
   public_ngw_id   = module.public_1a_natgateway.ngw_id
+}
+
+module "public_alb_tgec2_1a" {
+  source           = "../../modules/albtargetgroupattach"
+  target_group_arn = module.public_alb_tg.alb_tg_arn
+  instance_id      = module.private_1a_ec2.instance_id
 }
 
 module "private_1c_ec2" {
@@ -568,14 +563,25 @@ module "private_1c_ec2" {
   public_ngw_id   = module.public_1c_natgateway.ngw_id
 }
 
+module "public_alb_tgec2_1c" {
+  source           = "../../modules/albtargetgroupattach"
+  target_group_arn = module.public_alb_tg.alb_tg_arn
+  instance_id      = module.private_1c_ec2.instance_id
+}
+
+module "iam_backup_policy" {
+  source                         = "../../modules/iammanagedpolicy"
+  iam_role_policy_arn            = "arn:aws:iam::aws:policy/service-role/AWSBackupServiceRolePolicyForBackup"
+}
+
 module "iam_backup_role" {
   source                         = "../../modules/iamrole"
   system                         = var.system
   project                        = var.project
   environment                    = var.environment
-  resourcetype                   = "backup"
+  resourcetype                   = var.service_rsrc_type_backup
   iam_role_principal_identifiers = "backup.amazonaws.com"
-  iam_role_policy_arn            = "arn:aws:iam::aws:policy/service-role/AWSBackupServiceRolePolicyForBackup"
+  iam_policy_arn                 = module.iam_backup_policy.iam_policy_arn
 }
 
 module "ec2_backup" {
@@ -615,54 +621,94 @@ module "ec2_backup" {
 #   asg_max_size         = var.asg_max_size
 # }
 
+
+# module "iam_ecs_task_policy" {
+#   source       = "../../modules/iamcustompolicy"
+#   system       = var.system
+#   project      = var.project
+#   environment  = var.environment
+#   resourcetype = var.service_rsrc_type_ecs
+# }
+
+# module "iam_ecs_task_role" {
+#   source                         = "../../modules/iamrole"
+#   system                         = var.system
+#   project                        = var.project
+#   environment                    = var.environment
+#   resourcetype                   = "${var.service_rsrc_type_ecs}-task"
+#   iam_role_principal_identifiers = "ecs-tasks.amazonaws.com"
+#   iam_policy_arn                 = module.iam_ecs_task_policy.iam_policy_arn
+# }
+
+# module "iam_ecs_exec_policy" {
+#   source              = "../../modules/iammanagedpolicy"
+#   iam_role_policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"
+# }
+
+# module "iam_ecs_exec_role" {
+#   source                         = "../../modules/iamrole"
+#   system                         = var.system
+#   project                        = var.project
+#   environment                    = var.environment
+#   resourcetype                   = "${var.service_rsrc_type_ecs}-exec"
+#   iam_role_principal_identifiers = "ecs-tasks.amazonaws.com"
+#   iam_policy_arn                 = module.iam_ecs_exec_policy.iam_policy_arn
+# }
+
+# module "ecs_cluster" {
+#   source       = "../../modules/ecscluster"
+#   system       = var.system
+#   project      = var.project
+#   environment  = var.environment
+#   resourcetype = var.service_rsrc_type_ecs
+# }
+
+# module "ecs_httpd_container" {
+#   source                      = "../../modules/ecscontainer"
+#   system                      = var.system
+#   project                     = var.project
+#   environment                 = var.environment
+#   resourcetype                = var.service_rsrc_type_ecs
+#   ecs_task_role_arn           = module.iam_ecs_task_role.iam_role_arn
+#   ecs_exec_role_arn           = module.iam_ecs_exec_role.iam_role_arn
+#   container_definitions_file  = var.container_definitions_httpd_file
+#   ecs_cluster_arn             = module.ecs_cluster.ecs_cluster_arn
+#   ecs_service_desired_count   = var.ecs_httpd_service_desired_count
+#   ecs_container_name          = "httpd-container"
+#   ecs_container_port          = 80
+#   associate_public_ip_address = false
+#   private_1a_subnet_id        = module.private_1a_subnet.subnet_id
+#   private_1c_subnet_id        = module.private_1c_subnet.subnet_id
+#   security_group_id           = module.ec2_sg.security_group_id
+#   public_1a_ngw_id            = module.public_1a_natgateway.ngw_id
+#   public_1c_ngw_id            = module.public_1c_natgateway.ngw_id
+#   target_group_arn            = module.public_alb_tg.alb_tg_arn
+# }
+
+module "iam_rds_policy" {
+  source              = "../../modules/iammanagedpolicy"
+  iam_role_policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonRDSEnhancedMonitoringRole"
+}
+
 module "iam_rds_role" {
   source                         = "../../modules/iamrole"
   system                         = var.system
   project                        = var.project
   environment                    = var.environment
-  resourcetype                   = "rds"
+  resourcetype                   = var.service_rsrc_type_rds
   iam_role_principal_identifiers = "monitoring.rds.amazonaws.com"
-  iam_role_policy_arn            = "arn:aws:iam::aws:policy/service-role/AmazonRDSEnhancedMonitoringRole"
+  iam_policy_arn                 = module.iam_rds_policy.iam_policy_arn
 }
 
-# module "rds" {
-#   source            = "../../modules/rds"
-#   system            = var.system
-#   project           = var.project
-#   environment       = var.environment
-#   internal          = var.internal
-#   rds_engine_version = var.rds_engine_version
-#   security_group_id = module.rds_sg.security_group_id
-#   db_instance_class = var.db_instance_class
-#   # db_name                     = "${var.system}${var.project}${var.environment}-db"
-#   db_root_name             = var.db_root_name
-#   db_root_pass             = var.db_root_pass
-#   db_storage_type          = var.db_storage_type
-#   db_allocated_storage     = var.db_allocated_storage
-#   db_max_allocated_storage = var.db_max_allocated_storage
-#   db_storage_encrypted     = var.db_storage_encrypted
-#   # db_enabled_cloudwatch_logs_exports = ["error", "slowquery", "audit", "general"]
-#   db_backup_retention_period               = var.db_backup_retention_period
-#   db_backup_window                         = var.db_backup_window
-#   db_maintenance_window                    = var.db_maintenance_window
-#   db_performance_insights_enabled          = var.db_performance_insights_enabled
-#   db_performance_insights_retention_period = var.db_performance_insights_retention_period
-#   db_monitoring_role_arn                   = module.iam_rds_role.iam_role_arn
-#   db_monitoring_interval                   = var.db_monitoring_interval
-#   db_auto_minor_version_upgrade            = var.db_auto_minor_version_upgrade
-#   isolated_1a_subnet_id                    = module.isolated_1a_subnet.subnet_id
-#   isolated_1c_subnet_id                    = module.isolated_1c_subnet.subnet_id
-# }
-
-module "rdsaurora" {
-  source                = "../../modules/rdsaurora"
-  system                = var.system
-  project               = var.project
-  environment           = var.environment
-  internal              = var.internal
-  aurora_engine_version = var.aurora_engine_version
-  security_group_id     = module.rds_sg.security_group_id
-  db_instance_class     = var.db_instance_class
+module "rds" {
+  source            = "../../modules/rds"
+  system            = var.system
+  project           = var.project
+  environment       = var.environment
+  internal          = var.internal
+  rds_engine_version = var.rds_engine_version
+  security_group_id = module.rds_sg.security_group_id
+  db_instance_class = var.db_instance_class
   # db_name                     = "${var.system}${var.project}${var.environment}-db"
   db_root_name             = var.db_root_name
   db_root_pass             = var.db_root_pass
@@ -683,21 +729,50 @@ module "rdsaurora" {
   isolated_1c_subnet_id                    = module.isolated_1c_subnet.subnet_id
 }
 
-module "elasticache" {
-  source                           = "../../modules/elasticache"
-  system                           = var.system
-  project                          = var.project
-  environment                      = var.environment
-  internal                         = var.internal
-  cache_engine_version             = var.cache_engine_version
-  security_group_id                = module.cache_sg.security_group_id
-  cache_node_type                  = var.cache_node_type
-  num_node_groups                  = var.num_node_groups
-  replicas_per_node_group          = var.replicas_per_node_group
-  cache_snapshot_retention_limit   = var.cache_snapshot_retention_limit
-  cache_snapshot_window            = var.cache_snapshot_window
-  cache_maintenance_window         = var.cache_maintenance_window
-  cache_auto_minor_version_upgrade = var.cache_auto_minor_version_upgrade
-  isolated_1a_subnet_id            = module.isolated_1a_subnet.subnet_id
-  isolated_1c_subnet_id            = module.isolated_1c_subnet.subnet_id
-}
+# module "rdsaurora" {
+#   source                = "../../modules/rdsaurora"
+#   system                = var.system
+#   project               = var.project
+#   environment           = var.environment
+#   internal              = var.internal
+#   aurora_engine_version = var.aurora_engine_version
+#   security_group_id     = module.rds_sg.security_group_id
+#   db_instance_class     = var.db_instance_class
+#   # db_name                     = "${var.system}${var.project}${var.environment}-db"
+#   db_root_name             = var.db_root_name
+#   db_root_pass             = var.db_root_pass
+#   db_storage_type          = var.db_storage_type
+#   db_allocated_storage     = var.db_allocated_storage
+#   db_max_allocated_storage = var.db_max_allocated_storage
+#   db_storage_encrypted     = var.db_storage_encrypted
+#   # db_enabled_cloudwatch_logs_exports = ["error", "slowquery", "audit", "general"]
+#   db_backup_retention_period               = var.db_backup_retention_period
+#   db_backup_window                         = var.db_backup_window
+#   db_maintenance_window                    = var.db_maintenance_window
+#   db_performance_insights_enabled          = var.db_performance_insights_enabled
+#   db_performance_insights_retention_period = var.db_performance_insights_retention_period
+#   db_monitoring_role_arn                   = module.iam_rds_role.iam_role_arn
+#   db_monitoring_interval                   = var.db_monitoring_interval
+#   db_auto_minor_version_upgrade            = var.db_auto_minor_version_upgrade
+#   isolated_1a_subnet_id                    = module.isolated_1a_subnet.subnet_id
+#   isolated_1c_subnet_id                    = module.isolated_1c_subnet.subnet_id
+# }
+
+# module "elasticache" {
+#   source                           = "../../modules/elasticache"
+#   system                           = var.system
+#   project                          = var.project
+#   environment                      = var.environment
+#   internal                         = var.internal
+#   cache_engine_version             = var.cache_engine_version
+#   security_group_id                = module.cache_sg.security_group_id
+#   cache_node_type                  = var.cache_node_type
+#   num_node_groups                  = var.num_node_groups
+#   replicas_per_node_group          = var.replicas_per_node_group
+#   cache_snapshot_retention_limit   = var.cache_snapshot_retention_limit
+#   cache_snapshot_window            = var.cache_snapshot_window
+#   cache_maintenance_window         = var.cache_maintenance_window
+#   cache_auto_minor_version_upgrade = var.cache_auto_minor_version_upgrade
+#   isolated_1a_subnet_id            = module.isolated_1a_subnet.subnet_id
+#   isolated_1c_subnet_id            = module.isolated_1c_subnet.subnet_id
+# }

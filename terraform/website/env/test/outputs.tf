@@ -12,10 +12,10 @@ output "url_for_enduser" {
 #   value = module.rds.rds_endpoint
 # }
 
-output "aurora_endpoint" {
-  value = module.rdsaurora.aurora_endpoint
-}
+# output "aurora_endpoint" {
+#   value = module.rdsaurora.aurora_endpoint
+# }
 
-output "elasticache_endpoint" {
-  value = module.elasticache.elasticache_endpoint
-}
+# output "elasticache_endpoint" {
+#   value = module.elasticache.elasticache_endpoint
+# }

@@ -6,7 +6,7 @@
 
 resource "aws_lb_target_group" "tf_alb_tg" {
   name                          = "${var.system}-${var.project}-${var.environment}-${var.resourcetype}-tg"
-  target_type                   = "instance"
+  target_type                   = var.alb_target_type
   port                          = 80
   protocol                      = "HTTP"
   vpc_id                        = var.vpc_id
@@ -33,18 +33,6 @@ resource "aws_lb_target_group" "tf_alb_tg" {
   tags = {
     Name = "${var.system}-${var.project}-${var.environment}-${var.resourcetype}-tg"
   }
-}
-
-resource "aws_lb_target_group_attachment" "tf_alb_tgec2_1a" {
-  count            = var.has_instance_1a ? 1 : 0
-  target_group_arn = aws_lb_target_group.tf_alb_tg.arn
-  target_id        = var.instance_1a_id
-}
-
-resource "aws_lb_target_group_attachment" "tf_alb_tgec2_1c" {
-  count            = var.has_instance_1c ? 1 : 0
-  target_group_arn = aws_lb_target_group.tf_alb_tg.arn
-  target_id        = var.instance_1c_id
 }
 
 # ====================
