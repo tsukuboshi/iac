@@ -37,7 +37,7 @@ resource "aws_s3_bucket_lifecycle_configuration" "tf_bucket_lifecycle_configurat
   }
 }
 
-resource "aws_s3_bucket_server_side_encryption_configuration" "tf_bucket_encrypt_config_alb_log" {
+resource "aws_s3_bucket_server_side_encryption_configuration" "tf_bucket_encrypt_config_log" {
   bucket = aws_s3_bucket.tf_bucket_log.bucket
 
   rule {
