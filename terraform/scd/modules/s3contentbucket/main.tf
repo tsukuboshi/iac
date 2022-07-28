@@ -45,6 +45,17 @@ resource "aws_s3_bucket_policy" "tf_s3_bucket_policy_content" {
   policy = data.aws_iam_policy_document.tf_iam_policy_document_content.json
 }
 
+resource "aws_s3_bucket_server_side_encryption_configuration" "tf_bucket_encrypt_config_alb_log" {
+  bucket = aws_s3_bucket.tf_bucket_content.bucket
+
+  rule {
+    apply_server_side_encryption_by_default {
+      sse_algorithm     = "AES256"
+    }
+  }
+}
+
+
 data "aws_iam_policy_document" "tf_iam_policy_document_content" {
   statement {
     sid    = "Allow CloudFront"
