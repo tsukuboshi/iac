@@ -72,7 +72,7 @@ data "aws_iam_policy_document" "tf_iam_policy_document_log" {
       test     = "ArnLike"
       variable = "aws:SourceArn"
       values = [
-        "arn:aws:s3:::${var.system}-${var.project}-${var.environment}-content-${data.aws_caller_identity.tf_caller_identity.account_id}-*"
+        "arn:aws:s3:::${var.system}-${var.project}-${var.environment}-content-${data.aws_caller_identity.tf_caller_identity.account_id}"
       ]
     }
     condition {
