@@ -54,23 +54,23 @@ module "vpc" {
   environment                         = var.environment
   vpc_cidr_block                      = var.vpc_cidr_block
   vpc_enable_dns_hostnames            = false
-  has_flow_log                        = true
+  has_flow_log                        = false
   flow_log_bucket_arn                 = module.s3_vpc_log_bucket.bucket_arn
   flow_log_file_format                = var.flow_log_file_format_text
   flow_log_hive_compatible_partitions = false
   flow_log_per_hour_partition         = false
 }
 
-module "s3_vpc_log_bucket" {
-  source                 = "../../modules/s3logbucket"
-  system                 = var.system
-  project                = var.project
-  environment            = var.environment
-  resourcetype           = var.s3_rsrc_type_vpc
-  internal               = var.internal
-  object_ownership       = var.disabled_s3_acl
-  object_expiration_days = var.object_expiration_days
-}
+# module "s3_vpc_log_bucket" {
+#   source                 = "../../modules/s3logbucket"
+#   system                 = var.system
+#   project                = var.project
+#   environment            = var.environment
+#   resourcetype           = var.s3_rsrc_type_vpc
+#   internal               = var.internal
+#   object_ownership       = var.disabled_s3_acl
+#   object_expiration_days = var.object_expiration_days
+# }
 
 module "public_1a_subnet" {
   source                         = "../../modules/subnet"
@@ -103,7 +103,7 @@ module "private_1a_subnet" {
   environment                    = var.environment
   resourcetype                   = "${var.network_rsrc_type_private}-${var.az_short_name_1a}"
   subnet_cidr_block              = var.private_subnet_1a_cidr_block
-  subnet_map_public_ip_on_launch = false
+  subnet_map_public_ip_on_launch = var.has_public_ip_on_private_subnet
   subnet_availability_zone       = var.availability_zone_1a
   vpc_id                         = module.vpc.vpc_id
 }
@@ -115,7 +115,7 @@ module "private_1c_subnet" {
   environment                    = var.environment
   resourcetype                   = "${var.network_rsrc_type_private}-${var.az_short_name_1c}"
   subnet_cidr_block              = var.private_subnet_1c_cidr_block
-  subnet_map_public_ip_on_launch = false
+  subnet_map_public_ip_on_launch = var.has_public_ip_on_private_subnet
   subnet_availability_zone       = var.availability_zone_1c
   vpc_id                         = module.vpc.vpc_id
 }
@@ -202,27 +202,27 @@ module "internetgateway" {
   route_table_id = module.public_routetable.route_table_id
 }
 
-module "public_1a_natgateway" {
-  source         = "../../modules/natgateway"
-  system         = var.system
-  project        = var.project
-  environment    = var.environment
-  resourcetype   = "${var.network_rsrc_type_public}-${var.az_short_name_1a}"
-  subnet_id      = module.public_1a_subnet.subnet_id
-  igw_id         = module.internetgateway.igw_id
-  route_table_id = module.private_1a_routetable.route_table_id
-}
+# module "public_1a_natgateway" {
+#   source         = "../../modules/natgateway"
+#   system         = var.system
+#   project        = var.project
+#   environment    = var.environment
+#   resourcetype   = "${var.network_rsrc_type_public}-${var.az_short_name_1a}"
+#   subnet_id      = module.public_1a_subnet.subnet_id
+#   igw_id         = module.internetgateway.igw_id
+#   route_table_id = module.private_1a_routetable.route_table_id
+# }
 
-module "public_1c_natgateway" {
-  source         = "../../modules/natgateway"
-  system         = var.system
-  project        = var.project
-  environment    = var.environment
-  resourcetype   = "${var.network_rsrc_type_public}-${var.az_short_name_1c}"
-  subnet_id      = module.public_1c_subnet.subnet_id
-  igw_id         = module.internetgateway.igw_id
-  route_table_id = module.private_1c_routetable.route_table_id
-}
+# module "public_1c_natgateway" {
+#   source         = "../../modules/natgateway"
+#   system         = var.system
+#   project        = var.project
+#   environment    = var.environment
+#   resourcetype   = "${var.network_rsrc_type_public}-${var.az_short_name_1c}"
+#   subnet_id      = module.public_1c_subnet.subnet_id
+#   igw_id         = module.internetgateway.igw_id
+#   route_table_id = module.private_1c_routetable.route_table_id
+# }
 
 module "public_networkacl" {
   source       = "../../modules/networkacl"
@@ -512,7 +512,7 @@ module "instance_profile" {
   project      = var.project
   environment  = var.environment
   resourcetype = var.service_rsrc_type_ec2
-  ec2_role_arn = module.iam_ec2_role.iam_role_arn
+  ec2_role_name = module.iam_ec2_role.iam_role_name
 }
 
 module "private_1a_ec2" {
@@ -526,7 +526,7 @@ module "private_1a_ec2" {
   subnet_id                   = module.private_1a_subnet.subnet_id
   security_group_id           = module.ec2_sg.security_group_id
   ami_image_id                = module.ami.ami_image_id
-  associate_public_ip_address = false
+  associate_public_ip_address = var.has_public_ip_on_private_subnet
   instance_profile            = module.instance_profile.instance_profile
   # key_pair_id                 = module.keypair.key_pair_id
   user_data_file  = var.user_data_file
@@ -553,7 +553,7 @@ module "private_1c_ec2" {
   subnet_id                   = module.private_1c_subnet.subnet_id
   security_group_id           = module.ec2_sg.security_group_id
   ami_image_id                = module.ami.ami_image_id
-  associate_public_ip_address = false
+  associate_public_ip_address = var.has_public_ip_on_private_subnet
   instance_profile            = module.instance_profile.instance_profile
   # key_pair_id                 = module.keypair.key_pair_id
   user_data_file  = var.user_data_file
@@ -606,7 +606,7 @@ module "public_alb_tgec2_1c" {
 #   private_1c_subnet_id        = module.private_1c_subnet.subnet_id
 #   security_group_id           = module.ec2_sg.security_group_id
 #   ami_image_id                = module.ami.ami_image_id
-#   associate_public_ip_address = false
+#   associate_public_ip_address = var.has_public_ip_on_private_subnet
 #   instance_profile            = module.iam_instance_profile.instance_profile
 #   # key_pair_id                 = module.keypair.key_pair_id
 #   user_data_file       = var.user_data_file
@@ -676,7 +676,7 @@ module "public_alb_tgec2_1c" {
 #   ecs_service_desired_count   = var.ecs_httpd_service_desired_count
 #   ecs_container_name          = "httpd-container"
 #   ecs_container_port          = 80
-#   associate_public_ip_address = false
+#   associate_public_ip_address = var.has_public_ip_on_private_subnet
 #   private_1a_subnet_id        = module.private_1a_subnet.subnet_id
 #   private_1c_subnet_id        = module.private_1c_subnet.subnet_id
 #   security_group_id           = module.ec2_sg.security_group_id

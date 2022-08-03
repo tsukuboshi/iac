@@ -40,4 +40,6 @@ variable "ebs_volume_type" {}
 
 variable "ebs_encrypted" {}
 
-variable "public_ngw_id" {}
+variable "public_ngw_id" {
+  default = null
+}

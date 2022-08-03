@@ -123,6 +123,10 @@ variable "network_rsrc_type_isolated" {
   default = "isolated"
 }
 
+variable "has_public_ip_on_private_subnet" {
+  default = false
+}
+
 # ALB #
 
 variable "access_log_prefix" {

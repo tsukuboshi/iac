@@ -6,7 +6,7 @@
 
 resource "aws_iam_instance_profile" "tf_instance_profile" {
   name = "${var.system}-${var.project}-${var.environment}-${var.resourcetype}-instance-profile"
-  role = var.ec2_role_arn
+  role = var.ec2_role_name
 
   tags = {
     Name = "${var.system}-${var.project}-${var.environment}-${var.resourcetype}-instance-profile"

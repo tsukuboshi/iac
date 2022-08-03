@@ -12,4 +12,4 @@ variable "environment" {}
 
 variable "resourcetype" {}
 
-variable "ec2_role_arn" {}
+variable "ec2_role_name" {}
